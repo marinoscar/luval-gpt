@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Luval.OpenAI" Version="1.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.10" />
+    <PackageReference Include="Twilio" Version="6.15.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Data\Luval.Framework.Data.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Services\Luval.Framework.Services.csproj" />
+  </ItemGroup>
+
+</Project>

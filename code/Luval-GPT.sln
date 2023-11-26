@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.GPT", "Luval.GPT\Luval.GPT.csproj", "{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.Framework.Core", "..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj", "{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.Framework.Data", "..\..\luval-framework\code\Luval.Framework.Data\Luval.Framework.Data.csproj", "{9DFEE484-7B1F-412E-8AF6-49C290F2D31F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.Framework.Services", "..\..\luval-framework\code\Luval.Framework.Services\Luval.Framework.Services.csproj", "{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.GPT.Webhook", "Luval.GPT.Webhook\Luval.GPT.Webhook.csproj", "{093B27A9-9346-4820-9FA6-AC2EC7218475}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310}.Release|Any CPU.Build.0 = Release|Any CPU
+		{093B27A9-9346-4820-9FA6-AC2EC7218475}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{093B27A9-9346-4820-9FA6-AC2EC7218475}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{093B27A9-9346-4820-9FA6-AC2EC7218475}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{093B27A9-9346-4820-9FA6-AC2EC7218475}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
+		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
+		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3EE7FC68-5E97-4D79-88D3-F4900BF51CCC}
+	EndGlobalSection
+EndGlobal
