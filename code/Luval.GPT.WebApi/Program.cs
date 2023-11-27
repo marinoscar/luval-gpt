@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using Luval.GPT.Channels;
+using Luval.GPT.Services;
 
 namespace Luval.GPT.WebApi
 {
@@ -26,6 +28,8 @@ namespace Luval.GPT.WebApi
 
             builder.Services.AddSingleton<IConfigurationProvider>(config);
             builder.Services.AddSingleton<ILogger>(logger);
+            builder.Services.AddSingleton<IMessageClient>(AppUtils.GetMessageClient(config));
+            builder.Services.AddHostedService<Scheduler>();
 
             logger.LogInformation("Starting Service");
 

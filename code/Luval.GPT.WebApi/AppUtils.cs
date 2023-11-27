@@ -1,4 +1,6 @@
 ﻿using Luval.Framework.Core.Configuration;
+using Luval.GPT.Channels;
+using Luval.GPT.Channels.Whatsapp;
 using Luval.GPT.Logging;
 using System.Diagnostics;
 using IConfigurationProvider = Luval.Framework.Core.Configuration.IConfigurationProvider;
@@ -20,6 +22,12 @@ namespace Luval.GPT.WebApi
             if (Debugger.IsAttached) logger = AppLogger.CreateWithFileAndConsoleAndAws(config.Get("AWSAccessKey"), config.Get("AWSAccessSecret"), null, null);
             else AppLogger.CreateWithConsoleAndAws(config.Get("AWSAccessKey"), config.Get("AWSAccessSecret"), null, null);
             return logger;
+        }
+
+        internal static IMessageClient GetMessageClient(IConfigurationProvider config)
+        {
+            var whatsapp = new WhatsappClient(config.Get("TwilioSid"), config.Get("TwilioSecret"), config.Get("TwilioNumber"));
+            return whatsapp;
         }
     }
 }
