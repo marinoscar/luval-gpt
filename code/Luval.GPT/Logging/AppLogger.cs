@@ -111,7 +111,7 @@ namespace Luval.GPT.Logging
             NLog.LogLevel localMin;
             NLog.LogLevel localMax;
             if (minLevel == null) localMin = NLog.LogLevel.Debug; else localMin = minLevel;
-            if (maxLevel == null) localMax = NLog.LogLevel.Debug; else localMax = maxLevel;
+            if (maxLevel == null) localMax = NLog.LogLevel.Fatal; else localMax = maxLevel;
             config.AddRule(localMin, localMax, target);
         }
 

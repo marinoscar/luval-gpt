@@ -9,8 +9,8 @@ namespace Luval.GPT.WebApi
     {
         internal static IConfigurationProvider GetConfigurationProvider()
         {
-            var privateConfig = new JsonFileConfigurationProvider("private.json");
-            var publicConfig = new JsonFileConfigurationProvider("config.json");
+            var privateConfig = JsonFileConfigurationProvider.LoadOrCreate("private", null, false);
+            var publicConfig = JsonFileConfigurationProvider.LoadOrCreate("config", null, false);
             return new Framework.Core.Configuration.ConfigurationProvider(privateConfig, publicConfig);
         }
 
