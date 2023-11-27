@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Data\Luval.Framework.Data.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Services\Luval.Framework.Services.csproj" />
+    <ProjectReference Include="..\Luval.GPT\Luval.GPT.csproj" />
+  </ItemGroup>
+
+</Project>
