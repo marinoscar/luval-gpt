@@ -1,4 +1,5 @@
-﻿using Luval.GPT.Data.Entities;
+﻿using Luval.GPT.Channels;
+using Luval.GPT.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Luval.GPT.Data
 
         public DbSet<Agent> Agents { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<AppMessage> ChatMessages { get; set; }
 
 
 
@@ -40,9 +41,9 @@ namespace Luval.GPT.Data
         {
             if (ApplicationUsers != null && !ApplicationUsers.Any())
             {
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = "Whatsapp", ProviderKey = "+12488057580" }, cancellationToken);
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = "SMS", ProviderKey = "+12488057580" }, cancellationToken);
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = "Telegram", ProviderKey = "5640988132" }, cancellationToken);
+                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Whatsapp, ProviderKey = "+12488057580" }, cancellationToken);
+                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.SMS, ProviderKey = "+12488057580" }, cancellationToken);
+                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Telegram, ProviderKey = "5640988132" }, cancellationToken);
             }
         }
 

@@ -23,7 +23,7 @@ namespace Luval.GPT.WebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Connect(IFormCollection formCollection)
+        public async Task<IActionResult> Connect(IFormCollection formCollection, CancellationToken cancellationToken)
         {
             var h = this.Request.Headers.ToArray();
             var data = WebhookData.FromHttp(formCollection.ToDictionary());
@@ -32,7 +32,7 @@ namespace Luval.GPT.WebApi.Controllers
             _logger.LogDebug($"\n\nPayload:\n\n {payload}");
             _logger.LogDebug($"\n\nHeaders:\n\n {headers}");
 
-            return new OkResult();
+            return await Task.Run(() => { return new OkResult(); }, cancellationToken);
         }
     }
 }
