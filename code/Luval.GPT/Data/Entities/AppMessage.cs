@@ -22,7 +22,7 @@ namespace Luval.GPT.Data.Entities
         [Required, MaxLength(150)]
         public string? ProviderKey { get; set; }
         [Required]
-        public DateTime DateTime { get; set; }
+        public DateTime UtcDateTime { get; set; }
         [Required]
         public string? UserPrompt { get; set; }
         [Required]

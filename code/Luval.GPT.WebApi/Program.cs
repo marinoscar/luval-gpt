@@ -10,6 +10,10 @@ using System.Diagnostics;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Luval.GPT.Channels;
 using Luval.GPT.Services;
+using Luval.OpenAI.Chat;
+using Luval.GPT.Data;
+using Luval.GPT.GPT;
+using Luval.GPT.GPT.OpenAI;
 
 namespace Luval.GPT.WebApi
 {
@@ -28,7 +32,12 @@ namespace Luval.GPT.WebApi
 
             builder.Services.AddSingleton<IConfigurationProvider>(config);
             builder.Services.AddSingleton<ILogger>(logger);
-            builder.Services.AddSingleton<IMessageClient>(AppUtils.GetMessageClient(config));
+            builder.Services.AddSingleton<AppRepository>(AppUtils.GetAndInitAppRepo(config));
+            builder.Services.AddSingleton<IMessageClient>((s) => AppUtils.GetMessageClient(config));
+            builder.Services.AddScoped<ChatEndpoint>((s) => AppUtils.GetChatEndpoint(config));
+            builder.Services.AddScoped<IChatAgent, OpenAIChatAgent>();
+            builder.Services.AddScoped<ChatAgentService>();
+
             builder.Services.AddHostedService<Scheduler>();
 
             logger.LogInformation("Starting Service");

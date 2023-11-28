@@ -1,5 +1,6 @@
 ﻿using Luval.GPT.Channels;
 using Luval.GPT.Channels.Whatsapp;
+using Luval.GPT.Services;
 using Luval.GPT.WebApi.Config;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,10 +12,12 @@ namespace Luval.GPT.WebApi.Controllers
 
         private readonly ILogger _logger;
         private readonly IMessageClient _messageClient;
-        public ModelController(ILogger logger, IMessageClient messageClient)
+        private readonly ChatAgentService _chatAgentService;
+        public ModelController(ILogger logger, IMessageClient messageClient, ChatAgentService agentService)
         {
             _logger = logger;
             _messageClient = messageClient;
+            _chatAgentService = agentService;
         }
         public IActionResult Index()
         {
@@ -27,10 +30,10 @@ namespace Luval.GPT.WebApi.Controllers
         {
             var h = this.Request.Headers.ToArray();
             var data = WebhookData.FromHttp(formCollection.ToDictionary());
-            var payload = JsonConvert.SerializeObject(data);
-            var headers = JsonConvert.SerializeObject(h, Formatting.Indented);
-            _logger.LogDebug($"\n\nPayload:\n\n {payload}");
-            _logger.LogDebug($"\n\nHeaders:\n\n {headers}");
+            var message = data.ToAppMessage();
+            
+            var aiReponse = await _chatAgentService.ExecuteAsync(message, cancellationToken);
+            var messageResponse = await _messageClient.SendTextMessageAsync(message?.ProviderKey, message?.AgentText, cancellationToken);
 
             return await Task.Run(() => { return new OkResult(); }, cancellationToken);
         }

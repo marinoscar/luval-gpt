@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Primitives;
+﻿using Luval.GPT.Data.Entities;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,20 @@ namespace Luval.GPT.Channels.Whatsapp
                 SmsStatus = GetVal(nameof(SmsStatus), data),
                 To = GetVal(nameof(To), data),
                 WaId = GetVal(nameof(WaId), data)
+            };
+        }
+
+        public AppMessage ToAppMessage()
+        {
+            return new AppMessage() {
+                UserMediaItemUrl = this.MediaUrl0,
+                UserMediaType = this.MediaContentType0,
+                AgentText = null,
+                ChatType = "Chat",
+                ProviderKey = this.From?.Replace("whatsapp:", ""),
+                ProviderName = ChannelProviders.Whatsapp,
+                UtcDateTime = DateTime.UtcNow,
+                UserPrompt = this.Body
             };
         }
 
