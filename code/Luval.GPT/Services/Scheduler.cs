@@ -23,8 +23,8 @@ namespace Luval.GPT.Services
         protected async override void DoWork()
         {
             Logger.LogDebug($"Sending message to: \"+12488057580\"");
-            var item = await _messageClient.SendTextMessageAsync("+12488057580", $"Ping: {ExecutionCount}", CancellationToken.None);
-            Logger.LogDebug($"Sent with response:\n\n{item.ToString()}");
+            //var item = await _messageClient.SendTextMessageAsync("+12488057580", $"Ping: {ExecutionCount}", CancellationToken.None);
+            //Logger.LogDebug($"Sent with response:\n\n{item.ToString()}");
         }
     }
 }
