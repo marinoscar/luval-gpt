@@ -15,7 +15,7 @@ namespace Luval.GPT.Services
     {
         private readonly IChatAgent _chatAgent;
 
-        public ChatAgentService(ILogger logger, IChatAgent chatAgent) : this(logger, new ServiceConfiguration() { NumberOfRetries = 3, RetryIntervalInMs = 2000 }, chatAgent)
+        public ChatAgentService(ILogger logger, IChatAgent chatAgent) : this(logger, new ServiceConfiguration() { NumberOfRetries = 3, RetryIntervalInMs = 5000 }, chatAgent)
         {
                 
         }

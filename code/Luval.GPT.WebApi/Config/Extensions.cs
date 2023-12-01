@@ -1,5 +1,7 @@
 ﻿using Luval.Framework.Core.Configuration;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Specialized;
+using Twilio.Rest.Api.V2010.Account.Usage.Record;
 using IConfigurationProvider = Luval.Framework.Core.Configuration.IConfigurationProvider;
 
 namespace Luval.GPT.WebApi.Config
@@ -16,6 +18,16 @@ namespace Luval.GPT.WebApi.Config
             }
 
             return dictionary;
+        }
+
+        public static NameValueCollection ToNVC(this IFormCollection item)
+        {
+            var nvc = new NameValueCollection();
+            foreach (var i in item)
+            {
+                nvc.Add(i.Key, i.Value);
+            }
+            return nvc;
         }
     }
 }

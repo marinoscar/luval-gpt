@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Data
 {
-    public class AppRepository
+    public class AppRepository : IAppRepository
     {
 
         private readonly AppDbContext _dbContext;
@@ -20,7 +20,7 @@ namespace Luval.GPT.Data
 
         public async Task<AppMessage> PersistMessageAsync(AppMessage message, CancellationToken cancellation)
         {
-            await _dbContext.ChatMessages.AddAsync(message, cancellation);
+            await _dbContext.AppMessages.AddAsync(message, cancellation);
             await _dbContext.SaveChangesAsync(cancellation);
             return message;
         }
@@ -41,7 +41,7 @@ namespace Luval.GPT.Data
 
             return await Task.Run(() =>
             {
-                return _dbContext.ChatMessages.Where(predicate).Skip(delta.Value);
+                return _dbContext.AppMessages.Where(predicate).Skip(delta.Value);
             }, cancellation);
         }
 
@@ -49,13 +49,13 @@ namespace Luval.GPT.Data
         {
             return Task.Run(() =>
             {
-                return _dbContext.ChatMessages.Count(predicate);
+                return _dbContext.AppMessages.Count(predicate);
             }, cancellation);
         }
 
         private Task<IEnumerable<AppMessage>> GetAllMessagesAsync(Func<AppMessage, bool> predicate, CancellationToken cancellation)
         {
-            return Task.Run(() => { return _dbContext.ChatMessages.Where(predicate); }, cancellation);
+            return Task.Run(() => { return _dbContext.AppMessages.Where(predicate); }, cancellation);
         }
 
 

@@ -15,7 +15,7 @@ namespace Luval.GPT.Data
 
         public DbSet<Agent> Agents { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<AppMessage> ChatMessages { get; set; }
+        public DbSet<AppMessage> AppMessages { get; set; }
 
 
 
@@ -53,7 +53,8 @@ namespace Luval.GPT.Data
             {
                 await Agents.AddAsync(new Agent()
                 {
-                    Code = "OscarGPT",
+                    Code = "EmpowerGPT",
+                    Name = "Empower GPT",
                     SystemMessage = "You are a helpful assistant",
                     Provider = "OpenAI", ProviderModel = "gpt-3.5-turbo-16k-0613"
                 },

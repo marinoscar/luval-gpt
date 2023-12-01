@@ -22,30 +22,31 @@ namespace Luval.GPT.WebApi
             return new Framework.Core.Configuration.ConfigurationProvider(privateConfig, publicConfig);
         }
 
-        internal static ILogger GetLogger(IConfigurationProvider config)
+        internal static ILogger GetLogger()
         {
             ILogger logger = null;
-            if (Debugger.IsAttached) logger = AppLogger.CreateWithFileAndConsoleAndAws(config.Get("AWSAccessKey"), config.Get("AWSAccessSecret"), null, null);
-            else AppLogger.CreateWithConsoleAndAws(config.Get("AWSAccessKey"), config.Get("AWSAccessSecret"), null, null);
+            if (Debugger.IsAttached) logger = AppLogger.CreateWithFileAndConsoleAndAws(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
+            else AppLogger.CreateWithConsoleAndAws(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
             return logger;
         }
 
-        internal static IMessageClient GetMessageClient(IConfigurationProvider config)
+        internal static IMessageClient GetMessageClient()
         {
-            var whatsapp = new WhatsappClient(config.Get("TwilioSid"), config.Get("TwilioSecret"), config.Get("TwilioNumber"));
+            var whatsapp = new WhatsappClient(ConfigManager.Get("TwilioSid"), ConfigManager.Get("TwilioSecret"), ConfigManager.Get("TwilioNumber"));
             return whatsapp;
         }
 
-        internal static ChatEndpoint GetChatEndpoint(IConfigurationProvider config)
+        internal static ChatEndpoint GetChatEndpoint()
         {
-            var auth = new ApiAuthentication(new NetworkCredential("", config.Get("OpenAIKey")).SecurePassword);
+            var auth = new ApiAuthentication(new NetworkCredential("", ConfigManager.Get("OpenAIKey")).SecurePassword);
             return ChatEndpoint.CreateOpenAI(auth, Model.GPTTurbo16k);
         }
 
-        internal static AppRepository GetAndInitAppRepo(IConfigurationProvider config)
+        internal static AppRepository GetAndInitAppRepo()
         {
-            var conn = Debugger.IsAttached ? config.Get("DbConnection") : config.Get("ProdDbConnection");
+            var conn = Debugger.IsAttached ? ConfigManager.Get("DbConnection") : ConfigManager.Get("ProdDbConnection");
             var db = new MySqlAppDbContext(conn);
+            if (!db.Database.CanConnect()) throw new Exception("Unable to connect to the database");
             db.Database.EnsureCreated();
             var r = db.SeedDataAsync().Result;
             return new AppRepository(db);

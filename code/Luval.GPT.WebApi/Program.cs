@@ -14,6 +14,7 @@ using Luval.OpenAI.Chat;
 using Luval.GPT.Data;
 using Luval.GPT.GPT;
 using Luval.GPT.GPT.OpenAI;
+using Luval.GPT.Utilities;
 
 namespace Luval.GPT.WebApi
 {
@@ -28,17 +29,24 @@ namespace Luval.GPT.WebApi
 
             //Add application services
             var config = AppUtils.GetConfigurationProvider();
-            var logger = AppUtils.GetLogger(config);
+            ConfigManager.Init(config);
+
+            var logger = AppUtils.GetLogger();
+            logger.LogInformation("Starting the connection with the database");
+            var repo = AppUtils.GetAndInitAppRepo();
 
             builder.Services.AddSingleton<IConfigurationProvider>(config);
             builder.Services.AddSingleton<ILogger>(logger);
-            builder.Services.AddSingleton<AppRepository>(AppUtils.GetAndInitAppRepo(config));
-            builder.Services.AddSingleton<IMessageClient>((s) => AppUtils.GetMessageClient(config));
-            builder.Services.AddScoped<ChatEndpoint>((s) => AppUtils.GetChatEndpoint(config));
-            builder.Services.AddScoped<IChatAgent, OpenAIChatAgent>();
-            builder.Services.AddScoped<ChatAgentService>();
+            builder.Services.AddSingleton<IAppRepository>(repo);
+            builder.Services.AddSingleton<IMessageClient>((s) => AppUtils.GetMessageClient());
+            builder.Services.AddScoped<ChatEndpoint>((s) => AppUtils.GetChatEndpoint());
+            builder.Services.AddTransient<IChatAgent, OpenAIChatAgent>();
+            builder.Services.AddTransient<ChatAgentService>();
+            builder.Services.AddTransient<MessageService>();
+            builder.Services.AddTransient<AgentGptService>();
+            builder.Services.AddTransient<FireAndForgetHandler>();
 
-            builder.Services.AddHostedService<Scheduler>();
+            //builder.Services.AddHostedService<Scheduler>();
 
             logger.LogInformation("Starting Service");
 
