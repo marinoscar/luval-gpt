@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.GPT", "Luval.GPT\Luval.GPT.csproj", "{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.GPT", "Luval.GPT\Luval.GPT.csproj", "{41B84541-89B0-434C-AEE5-FE20E9AE9AFE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.Framework.Core", "..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj", "{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8}"
 EndProject
@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.Framework.Services", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.GPT.WebApi", "Luval.GPT.WebApi\Luval.GPT.WebApi.csproj", "{A39BFFE3-9D28-4D8B-95E9-36C360F0F925}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.GPT.WebApi", "Luval.GPT.WebApi\Luval.GPT.WebApi.csproj", "{A39BFFE3-9D28-4D8B-95E9-36C360F0F925}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cronos", "..\..\Cronos\src\Cronos\Cronos.csproj", "{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{A39BFFE3-9D28-4D8B-95E9-36C360F0F925}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A39BFFE3-9D28-4D8B-95E9-36C360F0F925}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A39BFFE3-9D28-4D8B-95E9-36C360F0F925}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{EC0D5130-8E7D-4661-B9DF-1C8597B94BB8} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
 		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
 		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
+		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EE7FC68-5E97-4D79-88D3-F4900BF51CCC}

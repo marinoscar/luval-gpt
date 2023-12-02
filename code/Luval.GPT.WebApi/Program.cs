@@ -47,6 +47,7 @@ namespace Luval.GPT.WebApi
             builder.Services.AddTransient<FireAndForgetHandler>();
 
             //builder.Services.AddHostedService<Scheduler>();
+            builder.Services.AddHostedService<ScheduleGPTService>((s) => { return new ScheduleGPTService(logger, "*/1 * * * *", TimeSpan.FromSeconds(15)); });
 
             logger.LogInformation("Starting Service");
 
