@@ -1,4 +1,4 @@
-﻿using Luval.WebPush.Data;
+﻿ using Luval.WebPush.Data;
 using Luval.WebPush.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

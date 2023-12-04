@@ -17,6 +17,8 @@ namespace Luval.GPT.Data.Entities
         public PushAgentMessage()
         {
             AppRootUrl = string.Empty;
+            UpVote = 0;
+            DownVote = 0;
         }
 
         [Required]
@@ -32,6 +34,9 @@ namespace Luval.GPT.Data.Entities
         public uint? PromptTokenCount { get; set; }
         public uint? AgentTokenCount { get; set; }
 
+        public int UpVote { get; set; }
+        public int DownVote { get; set; }
+
         [NotMapped]
         public string AppRootUrl { get; set; }
         [NotMapped]
@@ -39,6 +44,8 @@ namespace Luval.GPT.Data.Entities
         [NotMapped]
         public string? AgentImageUrl { get; set; }
 
+        [NotMapped]
+        public int Score { get { return UpVote - DownVote; } }
 
     }
 }
