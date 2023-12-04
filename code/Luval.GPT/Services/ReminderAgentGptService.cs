@@ -13,11 +13,11 @@ namespace Luval.GPT.Services
 {
     public class ReminderAgentGptService : LuvalServiceBase<ReminderAgentInput, IEnumerable<AppMessage>>
     {
-        private readonly IAppRepository _appRepository;
+        private readonly IPromptAppRepository _appRepository;
         private readonly PromptAgentService _promptAgentService;
         private readonly MessageService _messageService;
 
-        public ReminderAgentGptService(ILogger logger, string name, IAppRepository repository, PromptAgentService promptService, MessageService messageService, ServiceConfiguration serviceConfiguration) : base(logger, name, serviceConfiguration)
+        public ReminderAgentGptService(ILogger logger, string name, IPromptAppRepository repository, PromptAgentService promptService, MessageService messageService, ServiceConfiguration serviceConfiguration) : base(logger, name, serviceConfiguration)
         {
             _appRepository = repository ?? throw new ArgumentNullException(nameof(repository));
             _promptAgentService = promptService ?? throw new ArgumentNullException(nameof(promptService));

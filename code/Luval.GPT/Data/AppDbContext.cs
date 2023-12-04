@@ -14,8 +14,14 @@ namespace Luval.GPT.Data
     {
 
         public DbSet<Agent> Agents { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<MessageAccount> MessageAccounts { get; set; }
         public DbSet<AppMessage> AppMessages { get; set; }
+
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<AppUserDevice> AppUserDevices { get; set; }
+        public DbSet<PushAgent> PushAgents { get; set; }
+        public DbSet<PushAgentMessage> PushAgentMessages { get; set; }
+        public DbSet<PushAgentSubscription> PushAgentSubscriptions { get; set; }
 
 
 
@@ -39,11 +45,11 @@ namespace Luval.GPT.Data
 
         private async Task InitUsersAsync(CancellationToken cancellationToken = default)
         {
-            if (ApplicationUsers != null && !ApplicationUsers.Any())
+            if (MessageAccounts != null && !MessageAccounts.Any())
             {
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Whatsapp, ProviderKey = "+12488057580" }, cancellationToken);
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.SMS, ProviderKey = "+12488057580" }, cancellationToken);
-                await ApplicationUsers.AddAsync(new ApplicationUser() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Telegram, ProviderKey = "5640988132" }, cancellationToken);
+                await MessageAccounts.AddAsync(new MessageAccount() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Whatsapp, ProviderKey = "+12488057580" }, cancellationToken);
+                await MessageAccounts.AddAsync(new MessageAccount() { UserName = "Oscar Marin", ProviderName = ChannelProviders.SMS, ProviderKey = "+12488057580" }, cancellationToken);
+                await MessageAccounts.AddAsync(new MessageAccount() { UserName = "Oscar Marin", ProviderName = ChannelProviders.Telegram, ProviderKey = "5640988132" }, cancellationToken);
             }
         }
 
@@ -56,7 +62,8 @@ namespace Luval.GPT.Data
                     Code = "EmpowerGPT",
                     Name = "Empower GPT",
                     SystemMessage = "You are a helpful assistant",
-                    Provider = "OpenAI", ProviderModel = "gpt-3.5-turbo-16k-0613"
+                    Provider = "OpenAI",
+                    ProviderModel = "gpt-3.5-turbo-16k-0613"
                 },
                 cancellationToken);
             }

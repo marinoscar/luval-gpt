@@ -20,9 +20,9 @@ namespace Luval.GPT.WebApi.Controllers
         private readonly ILogger _logger;
         private readonly QueryAgentGptService _agentService;
         private readonly FireAndForgetHandler _fireAndForget;
-        private readonly IAppRepository _appRepository;
+        private readonly IPromptAppRepository _appRepository;
 
-        public ModelController(ILogger logger, QueryAgentGptService agentService, FireAndForgetHandler fireAndForget, IAppRepository appRepository)
+        public ModelController(ILogger logger, QueryAgentGptService agentService, FireAndForgetHandler fireAndForget, IPromptAppRepository appRepository)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _agentService = agentService ?? throw new ArgumentNullException(nameof(agentService));

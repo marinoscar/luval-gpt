@@ -84,14 +84,24 @@ namespace Luval.WebPush.Controllers
 
         private string GetPayload(string text)
         {
-            var payload = new NotificationOptions() { Body = text, Actions = new List<NotificationAction>(), Data = new Dictionary<string, object>() };
-            payload.Icon = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebPush/wwwroot/img/icon1024.png";
-            payload.Image = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebPush/wwwroot/img/icon1024.png";
+            var payload = new NotificationOptions()
+            {
+                Body = text,
+                Actions = new List<NotificationAction>(),
+                Icon = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebPush/wwwroot/img/icon1024.png",
+                Image = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebPush/wwwroot/img/icon1024.png",
+                Sound = "default",
+                Vibrate = new int[] { 200, 100, 200 },
+                Renotify = true,
+                Silent = false,
+                Tag = "OscarGPT",
+                Data = new Dictionary<string, object>() {
+                    { "navigateTo", "https://www.google.com/search?q=" + HttpUtility.UrlEncode(text) },
+                    { "dateOfArrival", DateTime.Now.ToString("o") }
+                }
+            };
             payload.Actions.Add(new NotificationAction() { Action = "explore", Title = "Click to learn more" });
             payload.Actions.Add(new NotificationAction() { Action = "close", Title = "Click to learn more" });
-            payload.Data["navigateTo"] = "https://www.google.com/search?q=" + HttpUtility.UrlEncode(text);
-            payload.Data["dateOfArrival"] = DateTime.Now.ToString("o");
-            payload.Vibrate = new int[] { 100, 50, 100 };
 
             string json = JsonConvert.SerializeObject(payload, new JsonSerializerSettings
             {

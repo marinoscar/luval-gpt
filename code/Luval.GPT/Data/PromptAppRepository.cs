@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Data
 {
-    public class AppRepository : IAppRepository
+    public class PromptAppRepository : IPromptAppRepository
     {
 
         private readonly AppDbContext _dbContext;
 
-        public AppRepository(AppDbContext dbContext)
+        public PromptAppRepository(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -24,9 +24,9 @@ namespace Luval.GPT.Data
             await _dbContext.SaveChangesAsync(cancellation);
             return message;
         }
-        public async Task<ApplicationUser?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation)
+        public async Task<MessageAccount?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation)
         {
-            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
+            return await _dbContext.MessageAccounts.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
         }
 
         public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords, CancellationToken cancellation)

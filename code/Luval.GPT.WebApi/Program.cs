@@ -37,7 +37,7 @@ namespace Luval.GPT.WebApi
 
             builder.Services.AddSingleton<IConfigurationProvider>(config);
             builder.Services.AddSingleton<ILogger>(logger);
-            builder.Services.AddSingleton<IAppRepository>(repo);
+            builder.Services.AddSingleton<IPromptAppRepository>(repo);
             builder.Services.AddSingleton<IMessageClient>((s) => AppUtils.GetMessageClient());
             builder.Services.AddTransient<ChatEndpoint>((s) => AppUtils.GetChatEndpoint());
             builder.Services.AddTransient<IChatAgent, OpenAIChatAgent>();

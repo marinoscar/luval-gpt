@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Luval.GPT.Data.Entities
 {
     [Index(nameof(ProviderName)), Index(nameof(ProviderKey))]
-    public class ApplicationUser : StringAuditEntry
+    public class MessageAccount : StringAuditEntry
     {
         [Required, MaxLength(150)]
         public string? UserName { get; set; }

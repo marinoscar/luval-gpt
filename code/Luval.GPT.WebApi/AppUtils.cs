@@ -46,14 +46,14 @@ namespace Luval.GPT.WebApi
             return ChatEndpoint.CreateOpenAI(auth, Model.GPTTurbo16k);
         }
 
-        internal static AppRepository GetAndInitAppRepo()
+        internal static PromptAppRepository GetAndInitAppRepo()
         {
             var conn = Debugger.IsAttached ? ConfigManager.Get("DbConnection") : ConfigManager.Get("ProdDbConnection");
             var db = new MySqlAppDbContext(conn);
             if (!db.Database.CanConnect()) throw new Exception("Unable to connect to the database");
             db.Database.EnsureCreated();
             var r = db.SeedDataAsync().Result;
-            return new AppRepository(db);
+            return new PromptAppRepository(db);
         }
 
 
@@ -62,7 +62,7 @@ namespace Luval.GPT.WebApi
             return new ReminderAgentGptService(
                 s.GetRequiredService<ILogger>(),
                 nameof(ReminderAgentGptService),
-                s.GetRequiredService<IAppRepository>(),
+                s.GetRequiredService<IPromptAppRepository>(),
                 s.GetRequiredService<PromptAgentService>(),
                 s.GetRequiredService<MessageService>(),
                 new ServiceConfiguration()
