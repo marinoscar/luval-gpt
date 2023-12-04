@@ -29,20 +29,41 @@ namespace Luval.GPT.Data
             return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
         }
 
-        public async Task<IEnumerable<AppMessage>> GetConversationHistory(AppMessage message, int? numberOfRecords, CancellationToken cancellation)
+        public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords, CancellationToken cancellation)
         {
-            Func<AppMessage, bool> predicate = i => i.ProviderKey == message.ProviderKey && i.ProviderName == message.ProviderName && i.ChatType == message.ChatType;
-            if (numberOfRecords == null) return await GetAllMessagesAsync(predicate, cancellation);
+            var predicate = GetPredicate(message);
+
+            if (lastNumberOfRecords == null) return await GetAllMessagesAsync(predicate, cancellation);
 
             var recordCount = await GetNumberofChatRecordsAsync(predicate, cancellation);
 
-            var delta = recordCount - numberOfRecords;
+            var delta = recordCount - lastNumberOfRecords;
             if (delta < recordCount) return await GetAllMessagesAsync(predicate, cancellation);
 
             return await Task.Run(() =>
             {
                 return _dbContext.AppMessages.Where(predicate).Skip(delta.Value);
             }, cancellation);
+        }
+
+        public async Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top, CancellationToken cancellation)
+        {
+            var predicate = GetPredicate(message);
+
+            if (top == null) return await GetAllMessagesAsync(predicate, cancellation);
+
+            return await Task.Run(() =>
+            {
+                return _dbContext.AppMessages.Where(predicate).Take((int)top);
+            }, cancellation);
+        }
+
+
+
+        private Func<AppMessage, bool> GetPredicate(AppMessage message)
+        {
+            Func<AppMessage, bool> predicate = i => i.ProviderKey == message.ProviderKey && i.ProviderName == message.ProviderName && i.ChatType == message.ChatType;
+            return predicate;
         }
 
         private Task<int> GetNumberofChatRecordsAsync(Func<AppMessage, bool> predicate, CancellationToken cancellation)

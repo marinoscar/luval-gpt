@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Services
 {
-    public class ChatAgentService : LuvalServiceBase<AppMessage, AppMessage>
+    public class QueryChatAgentService : LuvalServiceBase<AppMessage, AppMessage>
     {
         private readonly IChatAgent _chatAgent;
 
-        public ChatAgentService(ILogger logger, IChatAgent chatAgent) : this(logger, new ServiceConfiguration() { NumberOfRetries = 3, RetryIntervalInMs = 5000 }, chatAgent)
+        public QueryChatAgentService(ILogger logger, IChatAgent chatAgent) : this(logger, new ServiceConfiguration() { NumberOfRetries = 3, RetryIntervalInMs = 5000 }, chatAgent)
         {
                 
         }
 
-        public ChatAgentService(ILogger logger, ServiceConfiguration serviceConfiguration, IChatAgent chatAgent) : base(logger, "ChatAgentService", serviceConfiguration)
+        public QueryChatAgentService(ILogger logger, ServiceConfiguration serviceConfiguration, IChatAgent chatAgent) : base(logger, "ChatAgentService", serviceConfiguration)
         {
             _chatAgent = chatAgent;
         }
@@ -30,7 +30,7 @@ namespace Luval.GPT.Services
             var historyCount = 15;
             if (ServiceConfiguration.Settings.ContainsKey("HistoryCount")) int.TryParse(ServiceConfiguration.Settings["HistoryCount"], out historyCount);
 
-            var response = await _chatAgent.ProcessPromptAsync(input, historyCount, c);
+            var response = await _chatAgent.ProcessPromptWithHistoryAsync(input, historyCount, c);
             return new ServiceResponse<AppMessage>() { Status = ServiceStatus.Completed, Result = response, Message = "Success" };
         }
     }

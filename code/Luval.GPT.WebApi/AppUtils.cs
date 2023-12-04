@@ -4,12 +4,16 @@ using Luval.GPT.Channels.Whatsapp;
 using Luval.GPT.Data;
 using Luval.GPT.Data.MySql;
 using Luval.GPT.Logging;
+using Luval.GPT.Services;
 using Luval.OpenAI;
 using Luval.OpenAI.Chat;
 using Luval.OpenAI.Models;
 using System.Diagnostics;
 using System.Net;
 using IConfigurationProvider = Luval.Framework.Core.Configuration.IConfigurationProvider;
+using Microsoft.Extensions.DependencyInjection;
+using Luval.Framework.Services;
+using Luval.Framework.Core;
 
 namespace Luval.GPT.WebApi
 {
@@ -50,6 +54,52 @@ namespace Luval.GPT.WebApi
             db.Database.EnsureCreated();
             var r = db.SeedDataAsync().Result;
             return new AppRepository(db);
+        }
+
+
+        internal static ReminderAgentGptService CreateReminderAgentService(IServiceProvider s, string name)
+        {
+            return new ReminderAgentGptService(
+                s.GetRequiredService<ILogger>(),
+                nameof(ReminderAgentGptService),
+                s.GetRequiredService<IAppRepository>(),
+                s.GetRequiredService<PromptAgentService>(),
+                s.GetRequiredService<MessageService>(),
+                new ServiceConfiguration()
+                {
+                    NumberOfRetries = 3,
+                    RetryIntervalInMs = 3000
+                });
+        }
+
+        internal static ReminderChronService CreateSupplementReminder(IServiceProvider s)
+        {
+            var service = CreateReminderAgentService(s, "SupplementReminder");
+            var input = new ReminderAgentInput()
+            {
+                AgentText = ConfigManager.Get("SupAgentText"),
+                ReminderText = ConfigManager.Get("SupAgentReminderText"),
+                Provider = ChannelProviders.Whatsapp,
+                ProviderKeys = new List<string> { "+12488057580" },
+                ResponseEncloseCharacters = "$"
+            };
+            var expression = "0 8 * * *"; //every day at 8AM
+            var dueTime = DateTime.UtcNow.AddMinutes(1).Subtract(DateTime.UtcNow);
+            return CreateReminderChronService(s, service, input, "*/5 * * * *", dueTime, TimeSpan.FromSeconds(15));
+        }
+
+        private static ReminderChronService CreateReminderChronService(IServiceProvider s, ReminderAgentGptService reminderGptService, ReminderAgentInput input, string chronExpression, TimeSpan dueTime, TimeSpan period)
+        {
+
+            Action run = () =>
+            {
+                var t = reminderGptService.ExecuteAsync(input, CancellationToken.None);
+                t.Wait();
+            };
+            var reminderChronService = new ReminderChronService(
+                s.GetRequiredService<ILogger>(),
+                chronExpression, run, dueTime, period);
+            return reminderChronService;
         }
     }
 }

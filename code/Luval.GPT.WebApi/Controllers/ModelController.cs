@@ -18,11 +18,11 @@ namespace Luval.GPT.WebApi.Controllers
     {
 
         private readonly ILogger _logger;
-        private readonly AgentGptService _agentService;
+        private readonly QueryAgentGptService _agentService;
         private readonly FireAndForgetHandler _fireAndForget;
         private readonly IAppRepository _appRepository;
 
-        public ModelController(ILogger logger, AgentGptService agentService, FireAndForgetHandler fireAndForget, IAppRepository appRepository)
+        public ModelController(ILogger logger, QueryAgentGptService agentService, FireAndForgetHandler fireAndForget, IAppRepository appRepository)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _agentService = agentService ?? throw new ArgumentNullException(nameof(agentService));
@@ -69,7 +69,7 @@ namespace Luval.GPT.WebApi.Controllers
 
         private void DoProcessMessage(AppMessage message, CancellationToken cancellationToken)
         {
-            _fireAndForget.Execute<AgentGptService>(async (s) =>
+            _fireAndForget.Execute<QueryAgentGptService>(async (s) =>
             {
                 await s.ExecuteAsync(message, cancellationToken);
             });

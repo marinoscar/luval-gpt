@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Services
 {
-    public class AgentGptService
+    public class QueryAgentGptService
     {
-        private readonly ChatAgentService _chatAgentService;
+        private readonly QueryChatAgentService _chatAgentService;
         private readonly MessageService _messageService;
 
-        public AgentGptService(ChatAgentService chatAgentService, MessageService messageService)
+        public QueryAgentGptService(QueryChatAgentService chatAgentService, MessageService messageService)
         {
             _messageService = messageService ?? throw new ArgumentNullException(nameof(messageService));
             _chatAgentService = chatAgentService ?? throw new ArgumentNullException(nameof(chatAgentService));

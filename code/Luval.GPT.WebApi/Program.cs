@@ -39,15 +39,15 @@ namespace Luval.GPT.WebApi
             builder.Services.AddSingleton<ILogger>(logger);
             builder.Services.AddSingleton<IAppRepository>(repo);
             builder.Services.AddSingleton<IMessageClient>((s) => AppUtils.GetMessageClient());
-            builder.Services.AddScoped<ChatEndpoint>((s) => AppUtils.GetChatEndpoint());
+            builder.Services.AddTransient<ChatEndpoint>((s) => AppUtils.GetChatEndpoint());
             builder.Services.AddTransient<IChatAgent, OpenAIChatAgent>();
-            builder.Services.AddTransient<ChatAgentService>();
+            builder.Services.AddTransient<QueryChatAgentService>();
             builder.Services.AddTransient<MessageService>();
-            builder.Services.AddTransient<AgentGptService>();
+            builder.Services.AddTransient<QueryAgentGptService>();
             builder.Services.AddTransient<FireAndForgetHandler>();
-
-            //builder.Services.AddHostedService<Scheduler>();
-            builder.Services.AddHostedService<ScheduleGPTService>((s) => { return new ScheduleGPTService(logger, "*/1 * * * *", TimeSpan.FromSeconds(15)); });
+            builder.Services.AddTransient<PromptAgentService>();
+            builder.Services.AddHostedService<ReminderChronService>(AppUtils.CreateSupplementReminder);
+            //builder.Services.AddHostedService<ReminderChronService>((s) => { return s.GetRequiredService<>});
 
             logger.LogInformation("Starting Service");
 

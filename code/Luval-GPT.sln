@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.GPT.WebApi", "Luval.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cronos", "..\..\Cronos\src\Cronos\Cronos.csproj", "{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.WebPush", "Luval.WebPush\Luval.WebPush.csproj", "{5E50694F-8819-4A03-AEDD-49AC14551014}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.Firebase", "Luval.Firebase\Luval.Firebase.csproj", "{4C8C79E5-3767-4E67-98B3-5F436A7F04E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,14 @@ Global
 		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E50694F-8819-4A03-AEDD-49AC14551014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E50694F-8819-4A03-AEDD-49AC14551014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E50694F-8819-4A03-AEDD-49AC14551014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E50694F-8819-4A03-AEDD-49AC14551014}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C8C79E5-3767-4E67-98B3-5F436A7F04E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C8C79E5-3767-4E67-98B3-5F436A7F04E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C8C79E5-3767-4E67-98B3-5F436A7F04E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C8C79E5-3767-4E67-98B3-5F436A7F04E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
