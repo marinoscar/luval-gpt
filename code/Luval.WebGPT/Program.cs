@@ -29,7 +29,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
