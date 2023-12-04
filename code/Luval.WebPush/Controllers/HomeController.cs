@@ -85,6 +85,7 @@ namespace Luval.WebPush.Controllers
         private string GetPayload(string text)
         {
             var payload = new NotificationOptions() { Body = text, Actions = new List<NotificationAction>(), Data = new Dictionary<string, object>() };
+            payload.Icon = "~/img/icon1024.png";
             payload.Actions.Add(new NotificationAction() { Action = "explore", Title = "Click to learn more" });
             payload.Actions.Add(new NotificationAction() { Action = "close", Title = "Click to learn more" });
             payload.Data["navigateTo"] = "https://www.google.com/search?q=" + HttpUtility.UrlEncode(text);
