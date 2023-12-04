@@ -398,3 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 code/Luval.GPT/private.json
 code/Luval.WebPush/google-oauth.json
+/code/Luval.WebGPT/google-oauth.json
+/code/Luval.WebGPT/google-oauth.json
