@@ -6,4 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Cronos\src\Cronos\Cronos.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Data\Luval.Framework.Data.csproj" />
+    <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Services\Luval.Framework.Services.csproj" />
+    <ProjectReference Include="..\Luval.GPT\Luval.GPT.csproj" />
+  </ItemGroup>
+
 </Project>

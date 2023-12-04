@@ -7,3 +7,16 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+<a class="btn btn-secondary" href="/auth/google-login">Google Login</a>
+
+<AuthorizeView>
+    <Authorized>
+        <ul>
+        @foreach (var c in context.User.Claims)
+        {
+            <li>@c.Type - @c.Value</li>
+        }
+        </ul>
+    </Authorized>
+</AuthorizeView>
