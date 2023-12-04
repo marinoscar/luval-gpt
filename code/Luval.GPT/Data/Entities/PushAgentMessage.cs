@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration.Provider;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,11 @@ namespace Luval.GPT.Data.Entities
     [Index(nameof(AppUserId))]
     public class PushAgentMessage : IdentityEntity
     {
+        public PushAgentMessage()
+        {
+            AppRootUrl = string.Empty;
+        }
+
         [Required]
         public string? UserPrompt { get; set; }
         [Required]
@@ -25,6 +31,13 @@ namespace Luval.GPT.Data.Entities
         public string? CallToAction { get; set; }
         public uint? PromptTokenCount { get; set; }
         public uint? AgentTokenCount { get; set; }
+
+        [NotMapped]
+        public string AppRootUrl { get; set; }
+        [NotMapped]
+        public string? MessageImageUrl { get; set; }
+        [NotMapped]
+        public string? AgentImageUrl { get; set; }
 
 
     }
