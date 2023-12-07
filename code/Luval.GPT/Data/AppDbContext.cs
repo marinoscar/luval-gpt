@@ -101,7 +101,7 @@ namespace Luval.GPT.Data
                     ChronExpression = "0 18 * * 1-4",
                     ChronExpressionPrompt = "write a chron expression for monday, tuesday, wednesday, thursday at 6PM in the evening",
                     Name = "Gym Motivation Agent",
-                    ImageUrl = "",
+                    ImageUrl = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/001-square.png",
                     IsPublic = true,
                     PromptSuffix = GetSuffix(),
                     AppUserId = "",
