@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Luval.GPT.Channels.PushNotifications.Models
+namespace Luval.GPT.Channels.Push.Models
 {
     public class NotificationOptions
     {

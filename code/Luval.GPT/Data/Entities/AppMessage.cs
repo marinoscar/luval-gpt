@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,11 @@ namespace Luval.GPT.Data.Entities
         public string? AgentMediaType { get; set; }
         public string? AgentMediaItemUrl { get; set; }
         public uint? TokenCount { get; set; }
+        public int UpVote { get; set; }
+        public int DownVote { get; set; }
         public string? MessageData { get; set; }
+        [NotMapped]
+        public int Score { get { return UpVote - DownVote; } }
 
     }
 }

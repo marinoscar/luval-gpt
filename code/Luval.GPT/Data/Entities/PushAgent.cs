@@ -19,6 +19,7 @@ namespace Luval.GPT.Data.Entities
         public string? FriendlyName { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
+        public string? AppUserId { get; set; }
 
         [Required]
         public string? AgentPurpose { get; set; }
@@ -26,6 +27,13 @@ namespace Luval.GPT.Data.Entities
         public string? PromptPrefix { get; set; }
         public string? PromptSuffix { get; set; }
         public string? SystemMessage { get; set; }
+
+        public string? Timezone { get; set; }
+
+        public string? ChronExpressionPrompt { get; set; }
+
+        [Required]
+        public string? ChronExpression { get; set; }
 
     }
 }

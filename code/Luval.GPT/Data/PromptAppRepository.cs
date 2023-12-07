@@ -58,6 +58,21 @@ namespace Luval.GPT.Data
             }, cancellation);
         }
 
+        public IEnumerable<PushAgent> GetPushAgents()
+        {
+            return _dbContext.PushAgents;
+        }
+
+        public IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId, string userId)
+        {
+            return _dbContext.PushAgentSubscriptions.Where(i => i.PushAgentId == agentId && i.AppUserId == userId);
+        }
+
+        public IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId)
+        {
+            return _dbContext.PushAgentSubscriptions.Where(i => i.PushAgentId == agentId);
+        }
+
 
 
         private Func<AppMessage, bool> GetPredicate(AppMessage message)

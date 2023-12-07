@@ -1,6 +1,8 @@
-﻿using Luval.GPT.Channels.PushNotifications.Models;
+﻿
+using Luval.GPT.Channels.Push.Models;
 using Luval.GPT.Data.Entities;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 using Twilio.TwiML.Messaging;
 using WebPush;
 
-namespace Luval.GPT.Channels.PushNotifications
+namespace Luval.GPT.Channels.Push
 {
     public class PushClient
     {
@@ -21,21 +23,21 @@ namespace Luval.GPT.Channels.PushNotifications
             _vapi = vapi ?? throw new ArgumentNullException(nameof(vapi));
         }
 
-        public Task SendAsync(PushAgentMessage agentMessage, AppUserDevice userDevice, CancellationToken cancellationToken)
+        public Task SendAsync(NotificationOptions options, PushSubscription subscription, CancellationToken cancellationToken)
         {
-            return Task.Run(() => { Send(agentMessage, userDevice); }, cancellationToken);
+            return Task.Run(() => { Send(options, subscription); }, cancellationToken);
         }
 
-        public void Send(PushAgentMessage agentMessage, AppUserDevice userDevice)
+        public void Send(NotificationOptions options,  PushSubscription subscription)
         {
-            if (agentMessage == null) throw new ArgumentNullException(nameof(agentMessage));
-            if (userDevice == null) throw new Exception(nameof(userDevice));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+            if (subscription == null) throw new Exception(nameof(subscription));
 
             var webPushClient = new WebPushClient();
             try
             {
-                var payload = agentMessage.ToNotificationOptions().ToString();
-                webPushClient.SendNotification(userDevice.ToPushSub(), payload, _vapi);
+                var payload = options.ToString();
+                webPushClient.SendNotification(subscription, payload, _vapi);
             }
             catch (Exception exception)
             {

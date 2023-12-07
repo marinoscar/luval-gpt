@@ -11,6 +11,7 @@ namespace Luval.WebGPT.Controllers
         [HttpGet("google-login")]
         public IActionResult GoogleLogin()
         {
+            
             //if (string.IsNullOrEmpty(redirectUrl)) redirectUrl = "/";
             var prop = new AuthenticationProperties()
             {

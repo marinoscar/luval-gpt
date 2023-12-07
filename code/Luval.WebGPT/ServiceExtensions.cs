@@ -1,4 +1,6 @@
 ﻿using Luval.Framework.Core.Configuration;
+using Luval.GPT.Data;
+using Luval.GPT.Data.MySql;
 using Luval.GPT.Logging;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
@@ -58,12 +60,22 @@ namespace Luval.WebGPT
                     //opt.CallbackPath = "/auth/google-login"; 
                     opt.Events.OnCreatingTicket = context =>
                     {
-                        var pic = context.User.GetProperty("picture").GetString();
-                        context?.Identity?.AddClaim(new Claim("picture", pic));
+                        context?.Identity?.AddClaim(new Claim("providerName", "Google"));
                         return Task.CompletedTask;
                     };
                 });
 
+            return s;
+        }
+
+        public static IServiceCollection AddDbContext(this IServiceCollection s)
+        {
+            var conn = Debugger.IsAttached ? ConfigManager.Get("DbConnection") : ConfigManager.Get("ProdDbConnection");
+            var db = new MySqlAppDbContext(conn);
+            if (!db.Database.CanConnect()) throw new Exception("Unable to connect to the database");
+            db.Database.EnsureCreated();
+            var r = db.SeedDataAsync().Result;
+            s.AddSingleton<IAppDbContext>(db);
             return s;
         }
     }

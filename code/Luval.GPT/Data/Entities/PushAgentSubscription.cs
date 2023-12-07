@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebPush;
 
 namespace Luval.GPT.Data.Entities
 {
@@ -13,14 +14,19 @@ namespace Luval.GPT.Data.Entities
     public class PushAgentSubscription : IdentityEntity
     {
         [Required]
-        public string? PushAgentId { get; set; }
+        public ulong? PushAgentId { get; set; }
+        
         [Required, MaxLength(50)]
         public string? AppUserId { get; set; }
 
-        public string? ChronExpressionPrompt { get; set; }
+        public string? DeviceInformation { get; set; }
 
         [Required]
-        public string? ChronExpression { get; set; }
+        public string Endpoint { get; set; }
+        [Required]
+        public string P256DH { get; set; }
+        [Required]
+        public string Auth { get; set; }
 
 
     }

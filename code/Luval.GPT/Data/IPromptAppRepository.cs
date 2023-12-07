@@ -9,5 +9,9 @@ namespace Luval.GPT.Data
         Task<AppMessage> PersistMessageAsync(AppMessage message, CancellationToken cancellation);
 
         Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top, CancellationToken cancellation);
+
+        IEnumerable<PushAgent> GetPushAgents();
+        IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId, string userId);
+        IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId);
     }
 }

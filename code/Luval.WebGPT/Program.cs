@@ -14,6 +14,7 @@ builder.Services.AddHttpClient();
 builder.Services
     .AddConfing()
     .AddLogger()
+    .AddDbContext()
     .AddGoogleAuth();
 
 // Add services to the container.

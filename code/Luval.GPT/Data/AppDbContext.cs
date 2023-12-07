@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IAppDbContext
     {
 
         public DbSet<Agent> Agents { get; set; }
@@ -18,9 +18,7 @@ namespace Luval.GPT.Data
         public DbSet<AppMessage> AppMessages { get; set; }
 
         public DbSet<AppUser> AppUsers { get; set; }
-        public DbSet<AppUserDevice> AppUserDevices { get; set; }
         public DbSet<PushAgent> PushAgents { get; set; }
-        public DbSet<PushAgentMessage> PushAgentMessages { get; set; }
         public DbSet<PushAgentSubscription> PushAgentSubscriptions { get; set; }
 
 
