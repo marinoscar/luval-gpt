@@ -31,7 +31,7 @@ namespace Luval.GPT.Data
         /// <param name="cancellationToken"></param>
         public virtual async Task<int> SeedDataAsync(CancellationToken cancellationToken = default)
         {
-            await InitUsersAsync(cancellationToken);
+            await InitAppUserAsync(cancellationToken);
             await InitAgentAsync(cancellationToken);
             await InitUsersAsync(cancellationToken);
             await InitPushAgentAsync(cancellationToken);
