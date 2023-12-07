@@ -81,6 +81,10 @@ namespace Luval.GPT.Services
             foreach (var sub in _subscriptionData)
             {
                 if (sub != null &&
+                    sub.Subscription != null &&
+                    !string.IsNullOrEmpty(sub.Subscription.P256DH) &&
+                    !string.IsNullOrEmpty(sub.Subscription.Auth) &&
+                    !string.IsNullOrEmpty(sub.Subscription.Endpoint) &&
                     sub.Evaluator != null &&
                     sub.Evaluator.EvaluateNow(false, false))
                 {

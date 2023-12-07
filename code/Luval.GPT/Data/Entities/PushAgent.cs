@@ -12,11 +12,8 @@ namespace Luval.GPT.Data.Entities
 {
     public class PushAgent : IdentityEntity
     {
-        [Required, MaxLength(50)]
-        public string? Name { get; set; }
         [Required, MaxLength(1000)]
-        public string? Description { get; set; }
-        public string? FriendlyName { get; set; }
+        public string? Name { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
         public string? AppUserId { get; set; }
