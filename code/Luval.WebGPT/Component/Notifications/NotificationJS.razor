@@ -1,4 +1,5 @@
-﻿
+﻿@using Luval.Framework.Core.Configuration
+
 <script>
     $(document).ready(function () {
 
@@ -39,7 +40,7 @@
                 if (sub === null) {
                     reg.pushManager.subscribe({
                         userVisibleOnly: true,
-                        applicationServerKey: "@this.ApplicationServerKey"
+                        applicationServerKey: "@ConfigManager.Get("VAPIKey")"
                     }).then(function (sub) {
                         fillSubscribeFields(sub);
                     }).catch(function (e) {
@@ -69,14 +70,17 @@
 
     });
 
+    function returnVAPIInfo(){
+        return {
+            "Auth": document.getElementById('auth').value,
+            "P256DH": document.getElementById('p256dh').value,
+            "Endpoint": document.getElementById('endpoint').value
+        }
+    }
+
 
 
     
 
 
 </script>
-
-@code {
-    [Parameter]
-    public string? ApplicationServerKey { get; set; }
-}

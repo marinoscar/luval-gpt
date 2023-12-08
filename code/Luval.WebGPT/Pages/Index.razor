@@ -15,7 +15,7 @@ Welcome to your new app.
 <AuthorizeView>
     <Authorized>
 
-        <NotificationUI ApplicationServerKey="@ConfigManager.Get("VAPIKey")"></NotificationUI>
+        <NotificationUI></NotificationUI>
 
         <ul>
             @foreach (var c in context.User.Claims)

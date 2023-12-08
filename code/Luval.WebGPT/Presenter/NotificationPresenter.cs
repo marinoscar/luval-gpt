@@ -1,6 +1,10 @@
-﻿using Luval.GPT.Data;
+﻿using Luval.Framework.Core.Configuration;
+using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
 using Luval.WebGPT.Data.ViewModel;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using WebPush;
 
 namespace Luval.WebGPT.Presenter
 {
@@ -14,23 +18,51 @@ namespace Luval.WebGPT.Presenter
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            Sub = new DeviceSubscription()
+            {
+                ApplicationServerKey = ConfigManager.Get("VAPIKey"),
+                User = new WebUser()
+            };
         }
 
-        public void RegisterDevice(DeviceSubscription device)
+        public DeviceSubscription Sub { get; set; }
+        public IJSRuntime Js { get; set; }
+
+        public void OnAuthFieldChanged(ChangeEventArgs e)
+        {
+            Sub.Auth = Convert.ToString(e.Value);
+        }
+
+        public void OnP256FieldChanged(ChangeEventArgs e)
+        {
+            Sub.P256DH = Convert.ToString(e.Value);
+        }
+
+        public void OnEndpointFieldChanged(ChangeEventArgs e)
+        {
+            Sub.Endpoint = Convert.ToString(e.Value);
+        }
+
+        public async Task RegisterDevice()
         {
             try
             {
-                if (device == null) throw new ArgumentNullException(nameof(device));
-                if (device.User == null) throw new ArgumentException(nameof(device.User));
+                if (Sub == null) throw new ArgumentNullException(nameof(Sub));
+                if (Sub.User == null) throw new ArgumentException(nameof(Sub.User));
 
-                var user = _repository.GetApplicationUser(device.User.ProviderName, device.User.ProviderKey);
+                var res = await Js.InvokeAsync<PushSubscription>("returnVAPIInfo");
+                Sub.Auth = res.Auth;
+                Sub.Endpoint = res.Endpoint;
+                Sub.P256DH = res.P256DH;
+
+                var user = _repository.GetApplicationUser(Sub.User.ProviderName, Sub.User.ProviderKey);
 
                 var d = _repository.RegisterDevice(new Device()
                 {
                     AppUserId = user.Id,
-                    P256DH = device.P256DH,
-                    Endpoint = device.Endpoint,
-                    Auth = device.Auth,
+                    P256DH = Sub.P256DH,
+                    Endpoint = Sub.Endpoint,
+                    Auth = Sub.Auth,
                     CreatedBy = user.Id,
                     UpdatedBy = user.Id
                 });
