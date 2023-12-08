@@ -2,5 +2,7 @@
   "AWSAccessKey": "AKIAZUURN2QTDXNVMPEZ",
   "SupAgentText": "I am on a journey to improve myself; I am  40 years old, I am overweight, I am a very successful professional but I have not taken care of my body, I am overweight, and I have a problem controlling my appetite.  I need help with motivation. I need a motivation message to help me stay focus and make the best, I need a message to start my day in a very positive way, start the message reminding me to take my supplements, this message will be for a WhatsApp message and should not exceed 1000 characters, please use emojis. Provide the message in between $",
   "SupAgentReminderText": "Provide another Whatsapp message, also include emojis",
-  "WebPushUrl": "https://localhost:7000"
+  "WebPushUrl": "https://localhost:7000",
+  "VAPISubject": "mailto:oscar@marin.cr",
+  "VAPIKey": "BL9RcpyewdWDZYqHQ2sIQ1FjVtGHak1_L9yL-_K6vHEECOtPkMuh8Y9GmPoXXRe2wC5zoALlTukGfPUtT5iS32U"
 }

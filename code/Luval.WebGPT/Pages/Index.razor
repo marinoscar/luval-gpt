@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Luval.Framework.Core.Configuration
+@using Luval.WebGPT.Component.Notifications
 
 <PageTitle>Index</PageTitle>
 
@@ -12,11 +14,17 @@ Welcome to your new app.
 
 <AuthorizeView>
     <Authorized>
+
+        <NotificationUI ApplicationServerKey="@ConfigManager.Get("VAPIKey")"></NotificationUI>
+
         <ul>
-        @foreach (var c in context.User.Claims)
-        {
-            <li>@c.Type - @c.Value</li>
-        }
+            @foreach (var c in context.User.Claims)
+            {
+                <li>@c.Type - @c.Value</li>
+            }
         </ul>
     </Authorized>
 </AuthorizeView>
+
+@code {
+}

@@ -2,6 +2,7 @@
 using Luval.GPT.Data;
 using Luval.GPT.Data.MySql;
 using Luval.GPT.Logging;
+using Luval.WebGPT.Presenter;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
@@ -76,6 +77,17 @@ namespace Luval.WebGPT
             db.Database.EnsureCreated();
             var r = db.SeedDataAsync().Result;
             s.AddSingleton<IAppDbContext>(db);
+            return s;
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection s)
+        {
+            return s.AddScoped<IRepository, AppRepository>();
+        }
+
+        public static IServiceCollection AddPresenters(this IServiceCollection s)
+        {
+            s.AddScoped<NotificationPresenter>();
             return s;
         }
     }

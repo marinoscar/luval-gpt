@@ -3,19 +3,25 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Authentication;
 using Luval.WebGPT;
+using Org.BouncyCastle.Security;
+using Luval.GPT.Data;
+using Luval.GPT.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add controllers
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
 // Add services
 builder.Services
     .AddConfing()
     .AddLogger()
     .AddDbContext()
-    .AddGoogleAuth();
+    .AddGoogleAuth()
+    .AddRepositories()
+    .AddPresenters();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -48,6 +54,5 @@ app.MapFallbackToPage("/_Host");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 
 app.Run();

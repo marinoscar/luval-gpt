@@ -1,0 +1,69 @@
+﻿@using Luval.GPT.Data.Entities
+@using Luval.WebGPT.Data.ViewModel
+@using Luval.WebGPT.Presenter
+@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
+@using Luval.WebGPT
+
+
+@inject IHttpContextAccessor context
+@inject NotificationPresenter presenter
+@inject IHttpClientFactory httpFactory
+
+<h1>Subscribe to Push Notifications</h1>
+
+<div id="GiveAccess" style="display:none;">
+    Give access to making notifications:
+    <button id="PromptForAccessBtn">Prompt</button>
+</div>
+
+<div id="NoSupport" style="display:none;">
+    Your browser does not support Push Notifications or you have blocked notifications
+</div>
+
+<form method="post" id="form" style="display:none;" @onsubmit="Submit">
+    <input id="endpoint" name="endpoint" hidden @bind-value="Sub.Endpoint" />
+    <input id="p256dh" name="p256dh" hidden @bind-value="Sub.P256DH" />
+    <input id="auth" name="auth" hidden @bind-value="Sub.Auth" />
+
+    <button type="submit">Subscribe</button>
+</form>
+
+
+<NotificationJS ApplicationServerKey="@this.ApplicationServerKey"></NotificationJS>
+
+@code {
+
+    public DeviceSubscription? Sub { get; set; } = new DeviceSubscription();
+
+    [Parameter]
+    public string ApplicationServerKey
+    {
+        get { return Sub.ApplicationServerKey; }
+        set { Sub.ApplicationServerKey = value; }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (context.HttpContext != null && context.HttpContext.User != null && Sub != null)
+            Sub.User = context.HttpContext.User.ToUser();
+        base.OnInitialized();
+    }
+
+    private async Task Submit()
+    {
+        var http = httpFactory.CreateAppClient(context);
+        var res = await http.GetFromJsonAsync<List<AppUser>>("notification/index");
+
+        presenter.RegisterDevice(new DeviceSubscription()
+            {
+                ApplicationServerKey = this.ApplicationServerKey,
+                Auth = Sub.Auth,
+                Endpoint = Sub.Endpoint,
+                P256DH = Sub.P256DH,
+                User = Sub.User
+            });
+    }
+
+
+}

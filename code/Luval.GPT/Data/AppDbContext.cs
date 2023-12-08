@@ -23,6 +23,8 @@ namespace Luval.GPT.Data
         public DbSet<PushAgent> PushAgents { get; set; }
         public DbSet<PushAgentSubscription> PushAgentSubscriptions { get; set; }
 
+        public DbSet<Device> Devices { get; set; }
+
 
 
         /// <summary>

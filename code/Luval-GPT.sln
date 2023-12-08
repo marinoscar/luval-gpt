@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cronos", "..\..\Cronos\src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.WebPush", "Luval.WebPush\Luval.WebPush.csproj", "{5E50694F-8819-4A03-AEDD-49AC14551014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.WebGPT", "Luval.WebGPT\Luval.WebGPT.csproj", "{8FB9B4ED-F96A-4207-823C-8D2326D557B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.WebGPT", "Luval.WebGPT\Luval.WebGPT.csproj", "{8FB9B4ED-F96A-4207-823C-8D2326D557B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

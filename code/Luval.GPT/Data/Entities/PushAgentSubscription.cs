@@ -19,14 +19,9 @@ namespace Luval.GPT.Data.Entities
         [Required, MaxLength(50)]
         public string? AppUserId { get; set; }
 
-        public string? DeviceInformation { get; set; }
+        [Required]
+        public ulong? DeviceId { get; set; }
 
-        [Required]
-        public string Endpoint { get; set; }
-        [Required]
-        public string P256DH { get; set; }
-        [Required]
-        public string Auth { get; set; }
 
 
     }

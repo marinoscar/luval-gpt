@@ -13,9 +13,11 @@ namespace Luval.GPT.Data
         DbSet<MessageAccount> MessageAccounts { get; set; }
         DbSet<PushAgent> PushAgents { get; set; }
         DbSet<PushAgentSubscription> PushAgentSubscriptions { get; set; }
+        DbSet<Device> Devices { get; set; }
 
         Task<int> SeedDataAsync(CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        int SaveChanges();
 
         DatabaseFacade Database { get; }
     }

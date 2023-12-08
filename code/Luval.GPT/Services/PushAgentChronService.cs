@@ -10,15 +10,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Twilio.TwiML.Voice;
 using WebPush;
+
 
 namespace Luval.GPT.Services
 {
     public class PushAgentChronService : TimedHostedService
     {
         private List<SubscriptionData> _subscriptionData;
-        private readonly IPromptAppRepository _repository;
+        private readonly IRepository _repository;
         private readonly uint _subscriptionRefreshInterval;
         private DateTime? _lastUpdate;
         private readonly PushAgentGptManager _pushManager;
@@ -26,22 +26,22 @@ namespace Luval.GPT.Services
 
         #region Constructors
 
-        public PushAgentChronService(ILogger logger, IPromptAppRepository repository, PushAgentGptManager pushManager, PushClient pushClient) : this(logger, repository, pushManager, pushClient, TimeSpan.FromMinutes(1))
+        public PushAgentChronService(ILogger logger, IRepository repository, PushAgentGptManager pushManager, PushClient pushClient) : this(logger, repository, pushManager, pushClient, TimeSpan.FromMinutes(1))
         {
 
         }
 
-        public PushAgentChronService(ILogger logger, IPromptAppRepository repository, PushAgentGptManager pushManager, PushClient pushClient, TimeSpan period)
+        public PushAgentChronService(ILogger logger, IRepository repository, PushAgentGptManager pushManager, PushClient pushClient, TimeSpan period)
             : this(logger, repository, pushManager, pushClient, DateTime.UtcNow.AddMinutes(1).Subtract(DateTime.UtcNow), period)
         {
 
         }
 
-        public PushAgentChronService(ILogger logger, IPromptAppRepository repository, PushAgentGptManager pushManager, PushClient pushClient, TimeSpan dueTime, TimeSpan period) : this(logger, repository, pushManager, pushClient, 30, dueTime, period)
+        public PushAgentChronService(ILogger logger, IRepository repository, PushAgentGptManager pushManager, PushClient pushClient, TimeSpan dueTime, TimeSpan period) : this(logger, repository, pushManager, pushClient, 30, dueTime, period)
         {
         }
 
-        public PushAgentChronService(ILogger logger, IPromptAppRepository repository, PushAgentGptManager pushManager, PushClient pushClient, uint subscriptionRefreshInterval, TimeSpan dueTime, TimeSpan period) : base(logger, dueTime, period)
+        public PushAgentChronService(ILogger logger, IRepository repository, PushAgentGptManager pushManager, PushClient pushClient, uint subscriptionRefreshInterval, TimeSpan dueTime, TimeSpan period) : base(logger, dueTime, period)
         {
             _subscriptionRefreshInterval = subscriptionRefreshInterval;
             _pushManager = pushManager ?? throw new ArgumentNullException(nameof(pushManager));
@@ -63,11 +63,13 @@ namespace Luval.GPT.Services
                 if (subs != null && subs.Any())
                     foreach (var sub in subs)
                     {
+                        var devices = _repository.GetDevicesFromUser(sub.AppUserId);
                         newList.Add(new SubscriptionData()
                         {
                             Agent = agent,
                             Subscription = sub,
-                            Evaluator = new ChronEvaluator(agent.ChronExpression, agent.Timezone ?? "Central Standard Time")
+                            Evaluator = new ChronEvaluator(agent.ChronExpression, agent.Timezone ?? "Central Standard Time"),
+                            Devices = devices.ToList(),
                         });
                     }
             }
@@ -82,26 +84,29 @@ namespace Luval.GPT.Services
             {
                 if (sub != null &&
                     sub.Subscription != null &&
-                    !string.IsNullOrEmpty(sub.Subscription.P256DH) &&
-                    !string.IsNullOrEmpty(sub.Subscription.Auth) &&
-                    !string.IsNullOrEmpty(sub.Subscription.Endpoint) &&
                     sub.Evaluator != null &&
                     sub.Evaluator.EvaluateNow(false, false))
                 {
-                    System.Threading.Tasks.Task.Run(() => RunPushAgent(sub));
+                    foreach (var d in sub.Devices)
+                    {
+                        if (d == null) continue;
+                        Task.Run(() => RunPushAgent(sub, d));
+                    }
                 }
             }
         }
 
-        private void RunPushAgent(SubscriptionData agentData)
+        private void RunPushAgent(SubscriptionData agentData, Device device)
         {
             var managerTask = _pushManager.ProcessPushAgentAsync(agentData.Agent, CancellationToken.None);
             var res = managerTask.Result;
             var options = res.GetOptions(ConfigManager.Get("WebPushUrl"), null);
             _pushClient.Send(options,
-                new PushSubscription(agentData.Subscription.Endpoint,
-                agentData.Subscription.P256DH,
-                agentData.Subscription.Auth));
+                new PushSubscription(device.Endpoint,
+                device.P256DH,
+                device.Auth));
+
+            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
         }
 
         protected override void DoWork()
@@ -110,9 +115,15 @@ namespace Luval.GPT.Services
         }
         private class SubscriptionData
         {
+            public SubscriptionData()
+            {
+                Devices = new List<Device>();
+            }
             public Data.Entities.PushAgent? Agent { get; set; }
             public PushAgentSubscription? Subscription { get; set; }
             public ChronEvaluator? Evaluator { get; set; }
+
+            public List<Device> Devices { get; set; }
             DateTime UtcCreatedOn { get; set; }
         }
     }

@@ -13,10 +13,10 @@ namespace Luval.GPT.GPT.OpenAI
     public class OpenAIChatAgent : IChatAgent
     {
 
-        private readonly IPromptAppRepository _repository;
+        private readonly IRepository _repository;
         private readonly ChatEndpoint _chatEndpoint;
 
-        public OpenAIChatAgent(IPromptAppRepository repository, ChatEndpoint chat)
+        public OpenAIChatAgent(IRepository repository, ChatEndpoint chat)
         {
             _repository = repository;
             _chatEndpoint = chat;

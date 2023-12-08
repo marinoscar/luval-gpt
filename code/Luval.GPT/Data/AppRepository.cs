@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Data
 {
-    public class PromptAppRepository : IPromptAppRepository
+    public class AppRepository : IRepository
     {
 
-        private readonly AppDbContext _dbContext;
+        private readonly IAppDbContext _dbContext;
 
-        public PromptAppRepository(AppDbContext dbContext)
+        public AppRepository(IAppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -24,9 +24,51 @@ namespace Luval.GPT.Data
             await _dbContext.SaveChangesAsync(cancellation);
             return message;
         }
-        public async Task<MessageAccount?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation)
+
+        public async Task<Device> RegisterDevice(Device device, CancellationToken cancellation)
         {
-            return await _dbContext.MessageAccounts.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
+            if(device == null) throw new ArgumentNullException(nameof(device));
+
+            var item = await _dbContext.Devices.FirstOrDefaultAsync(
+                i => i.P256DH == device.P256DH &&
+                i.Endpoint == device.Endpoint &&
+                i.Auth == device.Auth, cancellation);
+            if (item != null)
+                return item;
+
+            await _dbContext.Devices.AddAsync(device, cancellation);
+
+            await _dbContext.SaveChangesAsync(cancellation);
+
+            return device;
+        }
+
+        public Device RegisterDevice(Device device)
+        {
+            if (device == null) throw new ArgumentNullException(nameof(device));
+
+            var item = _dbContext.Devices.FirstOrDefault(
+                i => i.P256DH == device.P256DH &&
+                i.Endpoint == device.Endpoint &&
+                i.Auth == device.Auth);
+            if (item != null)
+                return item;
+
+            _dbContext.Devices.Add(device);
+
+            _dbContext.SaveChanges();
+
+            return device;
+        }
+
+        public async Task<AppUser?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation)
+        {
+            return await _dbContext.AppUsers.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
+        }
+
+        public AppUser? GetApplicationUser(string providerName, string providerKey)
+        {
+            return _dbContext.AppUsers.FirstOrDefault(i => i.ProviderName == providerName && i.ProviderKey == providerKey);
         }
 
         public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords, CancellationToken cancellation)
@@ -66,6 +108,11 @@ namespace Luval.GPT.Data
         public IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId, string userId)
         {
             return _dbContext.PushAgentSubscriptions.Where(i => i.PushAgentId == agentId && i.AppUserId == userId);
+        }
+
+        public IEnumerable<Device> GetDevicesFromUser(string userId)
+        {
+            return _dbContext.Devices.Where(i => i.AppUserId == userId);
         }
 
         public IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId)

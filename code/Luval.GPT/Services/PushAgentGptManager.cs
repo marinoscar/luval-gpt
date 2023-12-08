@@ -13,9 +13,9 @@ namespace Luval.GPT.Services
 {
     public class PushAgentGptManager
     {
-        private readonly IPromptAppRepository _repository;
+        private readonly IRepository _repository;
         private readonly PromptAgentService _agentService;
-        public PushAgentGptManager(ILogger logger, IPromptAppRepository repository, PromptAgentService promptAgent)
+        public PushAgentGptManager(ILogger logger, IRepository repository, PromptAgentService promptAgent)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _agentService = promptAgent ?? throw new ArgumentNullException(nameof(promptAgent));
