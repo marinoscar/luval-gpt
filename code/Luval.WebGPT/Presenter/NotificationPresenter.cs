@@ -14,6 +14,7 @@ namespace Luval.WebGPT.Presenter
         private readonly ILogger _logger;
         private readonly IRepository _repository;
 
+
         public NotificationPresenter(ILogger logger, IRepository repository)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

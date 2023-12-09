@@ -1,0 +1,33 @@
+﻿@using Luval.GPT.Data.Entities
+@using Luval.WebGPT.Component.Auth
+@using Luval.WebGPT.Presenter
+
+@inject AgentPresenter presenter
+
+
+<AuthorizeView>
+    <Authorized>
+        @foreach (var a in presenter.GetAgents())
+        {
+            <div class="row">
+                <div class="col">
+                    <div class="card" style="width: 18rem;">
+                        <img src="@a.ImageUrl" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@a.Name</h5>
+                            <p class="card-text">@a.Description</p>
+                            <a href="@GetUrl(a)" class="btn btn-primary">Run</a>
+                            <a href="#" class="btn btn-secondary">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code{
+    string GetUrl(PushAgent a){
+        return $"/Agent/{a.Id}";
+    }
+}

@@ -15,6 +15,10 @@ namespace Luval.GPT.Data.Entities
         public string? Code { get; set; }
         [Required, MaxLength(150)]
         public string? Name { get; set; }
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
         [MaxLength(25)]
         public string? Provider { get; set; }
         [MaxLength(100)]

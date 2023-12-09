@@ -1,0 +1,43 @@
+﻿@using Luval.GPT.Data.Entities
+@using Luval.WebGPT.Presenter
+
+@inject AgentPresenter presenter
+
+@if(Message != null)
+{
+    <div class="row">
+        <div class="col">
+            <h1>@Message.MessageData</h1>
+            <hr />
+            <p>
+                @Message.AgentText
+            </p>
+        </div>
+    </div>
+}
+else
+{
+    <h1>Not found</h1>
+}
+
+
+
+@code {
+    [Parameter]
+    public string? MessageId { get; set; }
+    [Parameter]
+    public string? AgentId { get; set; }
+
+    public AppMessage Message { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Load();
+        base.OnInitialized();
+    }
+
+    private async Task Load()
+    {
+        Message = await presenter.LoadMessage(AgentId, MessageId);
+    }
+}

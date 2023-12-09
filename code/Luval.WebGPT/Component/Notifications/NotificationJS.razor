@@ -3,72 +3,103 @@
 <script>
     $(document).ready(function () {
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/ServiceWorker.js")
-                    .then((reg) => {
-                        if (Notification.permission === "granted") {
-                            $("#form").show();
-                            getSubscription(reg);
-                        } else if (Notification.permission === "blocked") {
-                            $("#NoSupport").show();
-                        } else {
-                            $("#GiveAccess").show();
-                            $("#PromptForAccessBtn").click(() => requestNotificationAccess(reg));
-                        }
-                    });
-            });
-        } else {
-            $("#NoSupport").show();
-        }
+       
+    });
 
-        function requestNotificationAccess(reg) {
-            Notification.requestPermission(function (status) {
-                console.log(status);
-                $("#GiveAccess").hide();
-                if (status == "granted") {
-                    $("#form").show();
-                    getSubscription(reg);
-                } else {
-                    $("#NoSupport").show();
-                }
-            });
-        }
+    if ('serviceWorker' in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/ServiceWorker.js")
+                .then((reg) => {
 
-        function getSubscription(reg) {
-            reg.pushManager.getSubscription().then(function (sub) {
-                if (sub === null) {
-                    reg.pushManager.subscribe({
+                    console.log("Permission:" + Notification.permission);
+
+                    if (Notification.permission === "granted") {
+
+                        console.log("Granted");
+                        $("#form").show();
+                        getSubscription(reg);
+
+                    } else if (Notification.permission === "blocked") {
+
+                        console.log("Not supported");
+                        $("#NoSupport").show();
+
+                    } else {
+
+                        console.log("Request");
+
+                        $("#GiveAccess").show();
+                        $("#PromptForAccessBtn").click(() => requestNotificationAccess(reg));
+
+                    }
+                });
+        });
+    } else {
+        $("#NoSupport").show();
+    }
+
+    function requestNotificationAccess(reg) {
+        Notification.requestPermission(function (status) {
+            
+            $("#GiveAccess").hide();
+
+            if (status == "granted") {
+
+                $("#form").show();
+                getSubscription(reg);
+
+            } else {
+
+                $("#NoSupport").show();
+            }
+
+        });
+    }
+
+    function getSubscription(reg) {
+
+        reg.pushManager.getSubscription().then(function (sub) {
+
+            console.log("Sub is: " + sub)
+
+            if (sub === null) {
+
+                console.log("Creating a new Sub");
+
+                reg.pushManager.subscribe(
+                    {
                         userVisibleOnly: true,
                         applicationServerKey: "@ConfigManager.Get("VAPIKey")"
-                    }).then(function (sub) {
-                        fillSubscribeFields(sub);
-                    }).catch(function (e) {
-                        console.error("Unable to subscribe to push", e);
-                    });
-                } else {
+                }).then(function (sub) {
+
                     fillSubscribeFields(sub);
-                }
-            });
-        }
+                }).catch(function (e) {
+                    console.error("Unable to subscribe to push", e);
+                });
+            } else {
 
-        function fillSubscribeFields(sub) {
-            $("#endpoint").val(sub.endpoint);
-            $("#p256dh").val(arrayBufferToBase64(sub.getKey("p256dh")));
-            $("#auth").val(arrayBufferToBase64(sub.getKey("auth")));
-        }
-
-        function arrayBufferToBase64(buffer) {
-            var binary = '';
-            var bytes = new Uint8Array(buffer);
-            var len = bytes.byteLength;
-            for (var i = 0; i < len; i++) {
-                binary += String.fromCharCode(bytes[i]);
+                console.log("Updating sub details");
+                fillSubscribeFields(sub);
             }
-            return window.btoa(binary);
-        }
+        });
 
-    });
+    }
+
+    function fillSubscribeFields(sub) {
+        $("#endpoint").val(sub.endpoint);
+        $("#p256dh").val(arrayBufferToBase64(sub.getKey("p256dh")));
+        $("#auth").val(arrayBufferToBase64(sub.getKey("auth")));
+    }
+
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
 
     function returnVAPIInfo(){
         return {
@@ -76,6 +107,10 @@
             "P256DH": document.getElementById('p256dh').value,
             "Endpoint": document.getElementById('endpoint').value
         }
+    }
+
+    function forceRefresh(){
+        location.reload(true);
     }
 
 

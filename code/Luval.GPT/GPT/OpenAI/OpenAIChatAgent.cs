@@ -24,7 +24,7 @@ namespace Luval.GPT.GPT.OpenAI
 
         public async Task<AppMessage> ProcessPromptWithHistoryAsync(AppMessage message, int? historyCount, CancellationToken cancellationToken)
         {
-            var history = await _repository.GetLastConversationHistory(message, historyCount, cancellationToken);
+            var history = await _repository.GetLastConversationHistory(message, historyCount);
             return await ProcessPrompt(message, history, cancellationToken);
         }
 
@@ -41,7 +41,7 @@ namespace Luval.GPT.GPT.OpenAI
             newMessage.TokenCount = (uint?)response.Usage.TotalTokens;
             newMessage.AgentText = response.Choice.Message.Content;
 
-            var result = await _repository.PersistMessageAsync(newMessage, cancellationToken);
+            var result = await _repository.PersistMessageAsync(newMessage);
             return result;
         }
     }

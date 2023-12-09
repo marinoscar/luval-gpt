@@ -18,29 +18,11 @@ namespace Luval.GPT.Data
             _dbContext = dbContext;
         }
 
-        public async Task<AppMessage> PersistMessageAsync(AppMessage message, CancellationToken cancellation)
+        public async Task<AppMessage> PersistMessageAsync(AppMessage message)
         {
-            await _dbContext.AppMessages.AddAsync(message, cancellation);
-            await _dbContext.SaveChangesAsync(cancellation);
+            await _dbContext.AppMessages.AddAsync(message);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
             return message;
-        }
-
-        public async Task<Device> RegisterDevice(Device device, CancellationToken cancellation)
-        {
-            if(device == null) throw new ArgumentNullException(nameof(device));
-
-            var item = await _dbContext.Devices.FirstOrDefaultAsync(
-                i => i.P256DH == device.P256DH &&
-                i.Endpoint == device.Endpoint &&
-                i.Auth == device.Auth, cancellation);
-            if (item != null)
-                return item;
-
-            await _dbContext.Devices.AddAsync(device, cancellation);
-
-            await _dbContext.SaveChangesAsync(cancellation);
-
-            return device;
         }
 
         public Device RegisterDevice(Device device)
@@ -61,9 +43,11 @@ namespace Luval.GPT.Data
             return device;
         }
 
-        public async Task<AppUser?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation)
+        public void UpdateAppMessage(AppMessage message)
         {
-            return await _dbContext.AppUsers.FirstOrDefaultAsync(i => i.ProviderName == providerName && i.ProviderKey == providerKey, cancellation);
+            var i = _dbContext.AppMessages.Attach(message);
+            i.State = EntityState.Modified;
+            _dbContext.SaveChanges();
         }
 
         public AppUser? GetApplicationUser(string providerName, string providerKey)
@@ -71,38 +55,59 @@ namespace Luval.GPT.Data
             return _dbContext.AppUsers.FirstOrDefault(i => i.ProviderName == providerName && i.ProviderKey == providerKey);
         }
 
-        public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords, CancellationToken cancellation)
+        public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords)
         {
             var predicate = GetPredicate(message);
 
-            if (lastNumberOfRecords == null) return await GetAllMessagesAsync(predicate, cancellation);
+            if (lastNumberOfRecords == null) return await GetAllMessagesAsync(predicate);
 
-            var recordCount = await GetNumberofChatRecordsAsync(predicate, cancellation);
+            var recordCount = await GetNumberofChatRecordsAsync(predicate);
 
             var delta = recordCount - lastNumberOfRecords;
-            if (delta < recordCount) return await GetAllMessagesAsync(predicate, cancellation);
+            if (delta < recordCount) return await GetAllMessagesAsync(predicate);
 
             return await Task.Run(() =>
             {
                 return _dbContext.AppMessages.Where(predicate).Skip(delta.Value);
-            }, cancellation);
+            });
         }
 
-        public async Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top, CancellationToken cancellation)
+        public async Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top)
         {
             var predicate = GetPredicate(message);
 
-            if (top == null) return await GetAllMessagesAsync(predicate, cancellation);
+            if (top == null) return await GetAllMessagesAsync(predicate);
 
             return await Task.Run(() =>
             {
                 return _dbContext.AppMessages.Where(predicate).Take((int)top);
-            }, cancellation);
+            });
         }
 
         public IEnumerable<PushAgent> GetPushAgents()
         {
             return _dbContext.PushAgents;
+        }
+
+        public IEnumerable<PushAgent> GetPushAgents(string userId)
+        {
+            return _dbContext.PushAgents.Where(i => i.AppUserId == userId);
+        }
+
+
+        public AppMessage GetAppMessage(ulong id)
+        {
+            return _dbContext.AppMessages.SingleOrDefault(i => i.Id == id);
+        }
+
+        public PushAgent GetPushAgent(ulong id)
+        {
+            return _dbContext.PushAgents.SingleOrDefault(i => i.Id == id);
+        }
+
+        public AppMessage GetAgentMessage(ulong messageId)
+        {
+            return _dbContext.AppMessages.FirstOrDefault(i => i.Id == messageId);
         }
 
         public IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId, string userId)
@@ -120,7 +125,7 @@ namespace Luval.GPT.Data
             return _dbContext.PushAgentSubscriptions.Where(i => i.PushAgentId == agentId);
         }
 
-
+        #region Private Methods
 
         private Func<AppMessage, bool> GetPredicate(AppMessage message)
         {
@@ -128,18 +133,20 @@ namespace Luval.GPT.Data
             return predicate;
         }
 
-        private Task<int> GetNumberofChatRecordsAsync(Func<AppMessage, bool> predicate, CancellationToken cancellation)
+        private Task<int> GetNumberofChatRecordsAsync(Func<AppMessage, bool> predicate)
         {
             return Task.Run(() =>
             {
                 return _dbContext.AppMessages.Count(predicate);
-            }, cancellation);
+            });
         }
 
-        private Task<IEnumerable<AppMessage>> GetAllMessagesAsync(Func<AppMessage, bool> predicate, CancellationToken cancellation)
+        private Task<IEnumerable<AppMessage>> GetAllMessagesAsync(Func<AppMessage, bool> predicate)
         {
-            return Task.Run(() => { return _dbContext.AppMessages.Where(predicate); }, cancellation);
-        }
+            return Task.Run(() => { return _dbContext.AppMessages.Where(predicate); });
+        } 
+
+        #endregion
 
 
     }

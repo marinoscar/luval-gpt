@@ -1,11 +1,18 @@
 ﻿using Luval.Framework.Core.Configuration;
 using Luval.GPT.Data;
 using Luval.GPT.Data.MySql;
+using Luval.GPT.GPT;
+using Luval.GPT.GPT.OpenAI;
 using Luval.GPT.Logging;
+using Luval.GPT.Services;
+using Luval.OpenAI;
+using Luval.OpenAI.Chat;
+using Luval.OpenAI.Models;
 using Luval.WebGPT.Presenter;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Net;
 using System.Security.Claims;
 using IConfigurationProvider = Luval.Framework.Core.Configuration.IConfigurationProvider;
 
@@ -88,6 +95,18 @@ namespace Luval.WebGPT
         public static IServiceCollection AddPresenters(this IServiceCollection s)
         {
             s.AddScoped<NotificationPresenter>();
+            s.AddScoped<AgentPresenter>();
+            return s;
+        }
+
+        public static IServiceCollection AddServices(this IServiceCollection s)
+        {
+            var openAIKey = ConfigManager.Get("OpenAIKey");
+            var key = new NetworkCredential("", openAIKey).SecurePassword;
+            s.AddScoped<ChatEndpoint>((s) => ChatEndpoint.CreateOpenAI(new ApiAuthentication(key), Model.GPTTurbo16k));
+            s.AddScoped<IChatAgent, OpenAIChatAgent>();
+            s.AddScoped<PromptAgentService>();
+            s.AddScoped<PushAgentGptManager>();
             return s;
         }
     }

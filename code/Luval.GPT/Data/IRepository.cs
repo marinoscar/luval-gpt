@@ -4,18 +4,22 @@ namespace Luval.GPT.Data
 {
     public interface IRepository
     {
-        Task<AppUser?> GetApplicationUser(string providerName, string providerKey, CancellationToken cancellation);
+        
         AppUser? GetApplicationUser(string providerName, string providerKey);
 
 
-        Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? numberOfRecords, CancellationToken cancellation);
-        Task<AppMessage> PersistMessageAsync(AppMessage message, CancellationToken cancellation);
-        Task<Device> RegisterDevice(Device device, CancellationToken cancellation);
+        Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? numberOfRecords);
+        Task<AppMessage> PersistMessageAsync(AppMessage message);
         Device RegisterDevice(Device device);
+        void UpdateAppMessage(AppMessage message);
 
-        Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top, CancellationToken cancellation);
+        Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top);
 
+        AppMessage GetAppMessage(ulong id);
         IEnumerable<PushAgent> GetPushAgents();
+        IEnumerable<PushAgent> GetPushAgents(string userId);
+        PushAgent GetPushAgent(ulong id);
+
         IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId, string userId);
         IEnumerable<PushAgentSubscription> GetSubscriptions(ulong agentId);
         IEnumerable<Device> GetDevicesFromUser(string userId);

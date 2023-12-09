@@ -14,6 +14,8 @@ namespace Luval.GPT.Data.Entities
     {
         [Required, MaxLength(1000)]
         public string? Name { get; set; }
+        [MaxLength(500)]
+        public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsPublic { get; set; }
         public string? AppUserId { get; set; }
@@ -31,6 +33,11 @@ namespace Luval.GPT.Data.Entities
 
         [Required]
         public string? ChronExpression { get; set; }
+
+        public string GetProviderName()
+        {
+            return $"PushNotification:{Id.ToString().PadLeft(5, '0')}";
+        }
 
     }
 }

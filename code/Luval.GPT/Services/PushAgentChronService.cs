@@ -98,7 +98,7 @@ namespace Luval.GPT.Services
 
         private void RunPushAgent(SubscriptionData agentData, Device device)
         {
-            var managerTask = _pushManager.ProcessPushAgentAsync(agentData.Agent, CancellationToken.None);
+            var managerTask = _pushManager.ProcessPushAgentAsync(agentData.Agent);
             var res = managerTask.Result;
             var options = res.GetOptions(ConfigManager.Get("WebPushUrl"), null);
             _pushClient.Send(options,

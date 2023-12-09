@@ -21,6 +21,7 @@ builder.Services
     .AddDbContext()
     .AddGoogleAuth()
     .AddRepositories()
+    .AddServices()
     .AddPresenters();
 
 // Add services to the container.

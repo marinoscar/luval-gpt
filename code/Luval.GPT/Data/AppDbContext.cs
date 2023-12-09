@@ -100,19 +100,20 @@ namespace Luval.GPT.Data
                 {
                     AgentPurpose = GetRootMessage(),
                     UserPrompt = GetFollowUpMessage(),
+                    Description = "Rev up your fitness journey with our AI-powered Gym Motivation feature. Tailored to your personal goals, it delivers inspiring messages right when you need them most. Schedule notifications to fit your routine, keeping you focused and energized for every workout. Stay inspired, stay fit!",
                     ChronExpression = "0 18 * * 1-4",
                     ChronExpressionPrompt = "write a chron expression for monday, tuesday, wednesday, thursday at 6PM in the evening",
                     Name = "Gym Motivation Agent",
                     ImageUrl = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/001-square.png",
                     IsPublic = true,
                     PromptSuffix = GetSuffix(),
-                    AppUserId = "",
+                    AppUserId = AdminUserId,
                     Timezone = "Central Standard Time",
                     SystemMessage = "You are a helpful assistant",
                     PromptPrefix = string.Empty,
                     CreatedBy = AdminUserId,
                     UpdatedBy = AdminUserId
-                });
+                }); ;
             }
         }
 

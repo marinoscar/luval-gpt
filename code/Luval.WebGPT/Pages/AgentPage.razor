@@ -1,0 +1,16 @@
+﻿@page "/Agent/{AgentId}"
+@page "/Agent/{AgentId}/Message/{MessageId}"
+
+@using Luval.WebGPT.Component.Agents
+@using Luval.WebGPT.Presenter
+
+@inject AgentPresenter presenter
+
+<AgentMessage AgentId="@AgentId" MessageId="@MessageId"></AgentMessage>
+
+@code {
+    [Parameter]
+    public string? MessageId { get; set; }
+    [Parameter]
+    public string? AgentId { get; set; }
+}

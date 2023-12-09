@@ -1,28 +1,20 @@
 ﻿@page "/"
 @using Luval.Framework.Core.Configuration
+@using Luval.WebGPT.Component.Agents
 @using Luval.WebGPT.Component.Notifications
+@using Luval.WebGPT.Component.Auth
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
-
-<a class="btn btn-secondary" href="/auth/google-login">Google Login</a>
+<LoginControl></LoginControl>
 
 <AuthorizeView>
     <Authorized>
-
+        <h3>Agents</h3>
+        <br />
         <NotificationUI></NotificationUI>
-
-        <ul>
-            @foreach (var c in context.User.Claims)
-            {
-                <li>@c.Type - @c.Value</li>
-            }
-        </ul>
+        <br />
+        <AgentList></AgentList>
     </Authorized>
 </AuthorizeView>
 

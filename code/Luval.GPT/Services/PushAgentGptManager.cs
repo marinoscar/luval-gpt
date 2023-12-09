@@ -1,8 +1,8 @@
-﻿using Amazon.Runtime.Internal.Util;
-using Luval.Framework.Services;
+﻿using Luval.Framework.Services;
 using Luval.GPT.Channels.Push.Models;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,32 +15,36 @@ namespace Luval.GPT.Services
     {
         private readonly IRepository _repository;
         private readonly PromptAgentService _agentService;
-        public PushAgentGptManager(ILogger logger, IRepository repository, PromptAgentService promptAgent)
+        public PushAgentGptManager(IRepository repository, PromptAgentService promptAgent)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _agentService = promptAgent ?? throw new ArgumentNullException(nameof(promptAgent));
         }
 
-        public async Task<WebPushResponse> ProcessPushAgentAsync(PushAgent agent, CancellationToken cancellationToken)
+        public async Task<WebPushResponse> ProcessPushAgentAsync(PushAgent agent)
         {
-            var gptMessage = await GetMessageAsync(agent, cancellationToken);
-            var gptNotification = await GetMessageForNotification(gptMessage, cancellationToken);
+            var gptMessage = await GetMessageAsync(agent);
+            var gptNotification = await GetMessageForNotification(gptMessage);
+            
+            gptMessage.MessageData = gptNotification.AgentText;
+            _repository.UpdateAppMessage(gptMessage);
+
             return new WebPushResponse() { MessageContent = gptMessage, NotificationContent = gptNotification };
         }
 
-        public async Task<AppMessage> GetMessageAsync(PushAgent agent, CancellationToken cancellationToken)
+        public async Task<AppMessage> GetMessageAsync(PushAgent agent)
         {
-            var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent), 20, cancellationToken);
+            var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent), 20);
             var message = history.Any() ? CreateFollowUpMessage(agent) : CreateRootMessage(agent);
-            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { History = history, Message = message }, cancellationToken);
+            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { History = history, Message = message }, CancellationToken.None);
             if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: { response.Message }", response.Exception);
             return response.Result;
         }
 
-        private async Task<AppMessage> GetMessageForNotification(AppMessage appMessage, CancellationToken cancellationToken)
+        private async Task<AppMessage> GetMessageForNotification(AppMessage appMessage)
         {
             var promptMessage = RequestNotificationOptions(appMessage.AgentText, appMessage.ProviderKey);
-            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { Message = promptMessage }, cancellationToken);
+            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { Message = promptMessage }, CancellationToken.None);
             if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: {response.Message}", response.Exception);
             return response.Result;
         }
@@ -101,7 +105,7 @@ Provide the response between $
             {
                 UserPrompt = text,
                 ChatType = "PushNotification",
-                ProviderName = "PushNotification",
+                ProviderName = agent.GetProviderName(),
                 ProviderKey = agent.AppUserId,
                 UtcDateTime = DateTime.UtcNow,
             };
