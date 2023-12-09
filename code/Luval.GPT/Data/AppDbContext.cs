@@ -149,7 +149,6 @@ My purpose is to honor the life I've been given and the people I love – my dau
         {
             return @"
 * Start the message with ^^^
-* End the message with $
 * Do not exceed 1000 characters
 * Include a few emojis
 * Remember that my name is Oscar

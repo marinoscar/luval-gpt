@@ -1,4 +1,5 @@
-﻿@using Luval.GPT.Data.Entities
+﻿@using Luval.Framework.Services
+@using Luval.GPT.Data.Entities
 @using Luval.WebGPT.Presenter
 
 @inject AgentPresenter presenter
@@ -38,6 +39,16 @@ else
 
     private async Task Load()
     {
-        Message = await presenter.LoadMessage(AgentId, MessageId);
+        var r = await presenter.LoadMessage(AgentId, MessageId, Callback);
+        if(r.Status == ServiceStatus.Completed)
+        {
+            Message = r.Result;
+            this.StateHasChanged();
+        }
+    }
+
+    private void Callback(ServiceResponse<AppMessage> r)
+    {
+        
     }
 }

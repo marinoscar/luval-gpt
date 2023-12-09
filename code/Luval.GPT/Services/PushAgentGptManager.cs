@@ -25,7 +25,7 @@ namespace Luval.GPT.Services
         {
             var gptMessage = await GetMessageAsync(agent);
             var gptNotification = await GetMessageForNotification(gptMessage);
-            
+
             gptMessage.MessageData = gptNotification.AgentText;
             _repository.UpdateAppMessage(gptMessage);
 
@@ -37,14 +37,14 @@ namespace Luval.GPT.Services
             var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent), 20);
             var message = history.Any() ? CreateFollowUpMessage(agent) : CreateRootMessage(agent);
             var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { History = history, Message = message }, CancellationToken.None);
-            if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: { response.Message }", response.Exception);
+            if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: {response.Message}", response.Exception);
             return response.Result;
         }
 
         private async Task<AppMessage> GetMessageForNotification(AppMessage appMessage)
         {
             var promptMessage = RequestNotificationOptions(appMessage.AgentText, appMessage.ProviderKey);
-            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { Message = promptMessage }, CancellationToken.None);
+            var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { Message = promptMessage, History = new List<AppMessage>() }, CancellationToken.None);
             if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: {response.Message}", response.Exception);
             return response.Result;
         }
@@ -96,8 +96,6 @@ key: decline
 {rootText}
 
 {agent.PromptSuffix}
-
-Provide the response between $
 
 ";
 

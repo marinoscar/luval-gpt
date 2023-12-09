@@ -1,4 +1,7 @@
-﻿using Luval.GPT.Data;
+﻿using Luval.Framework.Core;
+using Luval.Framework.Services;
+using Luval.GPT.Channels.Push.Models;
+using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
 using Luval.GPT.Services;
 
@@ -30,15 +33,36 @@ namespace Luval.WebGPT.Presenter
             return items;
         }
 
-        public async Task<AppMessage> LoadMessage(string? agentId, string? messageId)
+        public async Task<ServiceResponse<AppMessage>> LoadMessage(string? agentId, string? messageId, Action<ServiceResponse<AppMessage>> callback)
         {
-            if (agentId == null) throw new ArgumentNullException(nameof(agentId));
-            if (messageId == null)
+            var response = new ServiceResponse<AppMessage>()
             {
-                var agent = _repository.GetPushAgent(Convert.ToUInt64(agentId));
-                return await CreateMessage(agent);
+                Status = ServiceStatus.Completed
+            };
+            if (agentId == null) throw new ArgumentNullException(nameof(agentId));
+            try
+            {
+                if (messageId == null)
+                {
+                    var agent = _repository.GetPushAgent(Convert.ToUInt64(agentId));
+                    response.Result = CleanMessage(await CreateMessage(agent));
+                    response.Message = "Message created";
+                }
+                else
+                {
+                    response.Result = CleanMessage(_repository.GetAppMessage(Convert.ToUInt64(messageId)));
+                    response.Message = "Message loaded";
+                }
             }
-            return _repository.GetAppMessage(Convert.ToUInt64(messageId));
+            catch (Exception e)
+            {
+
+                response.Exception = e;
+                response.Status = ServiceStatus.Fail;
+                response.Message = e.Message;
+            }
+            callback(response);
+            return response;
         }
 
         public async Task<AppMessage> CreateMessage(PushAgent agent)
@@ -55,6 +79,14 @@ namespace Luval.WebGPT.Presenter
             return _appUser;
         }
 
+        private static AppMessage CleanMessage(AppMessage m)
+        {
+            var clone = m.Clone();
 
+            clone.AgentText = clone.AgentText.GetTextInBetween("^^^");
+            var o = OptionActionModel.FromGpt(clone.MessageData);
+            clone.MessageData = o.Title.Replace("^^^", "");
+            return clone;
+        }
     }
 }
