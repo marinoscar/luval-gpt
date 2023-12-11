@@ -1,0 +1,9 @@
+Please create an image that will work as an application icon that covers the following
+
+* Has an icon style
+* Represents the following topic: "Gym Motivation"
+* Has a color scheme aligned with the topic of "Gym Motivation"
+* Pick a figure from an existing emoji
+* The image figure covers almost all of the surface of the image
+* The background is a solid color
+* Use a blue color from the primary colors

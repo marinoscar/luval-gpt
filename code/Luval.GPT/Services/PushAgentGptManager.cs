@@ -1,4 +1,5 @@
-﻿using Luval.Framework.Services;
+﻿using Luval.Framework.Core.Configuration;
+using Luval.Framework.Services;
 using Luval.GPT.Channels.Push.Models;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
@@ -23,7 +24,15 @@ namespace Luval.GPT.Services
 
         public async Task<WebPushResponse> ProcessPushAgentAsync(PushAgent agent)
         {
-            var gptMessage = await GetMessageAsync(agent);
+            var purpose = _repository.GetPurpose(agent.AppUserId);
+            string purposeText;
+            
+            if (purpose == null)
+                purposeText = GetGenericPurpose();
+            else
+                purposeText = purpose.Purpose;
+
+            var gptMessage = await GetMessageAsync(agent, purposeText);
             var gptNotification = await GetMessageForNotification(gptMessage);
 
             gptMessage.MessageData = gptNotification.AgentText;
@@ -32,10 +41,10 @@ namespace Luval.GPT.Services
             return new WebPushResponse() { MessageContent = gptMessage, NotificationContent = gptNotification };
         }
 
-        public async Task<AppMessage> GetMessageAsync(PushAgent agent)
+        public async Task<AppMessage> GetMessageAsync(PushAgent agent, string purpose)
         {
-            var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent), 20);
-            var message = history.Any() ? CreateFollowUpMessage(agent) : CreateRootMessage(agent);
+            var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent, purpose), 20);
+            var message = history.Any() ? CreateFollowUpMessage(agent, purpose) : CreateRootMessage(agent, purpose);
             var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { History = history, Message = message }, CancellationToken.None);
             if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: {response.Message}", response.Exception);
             return response.Result;
@@ -78,22 +87,25 @@ key: decline
         }
 
 
-        private AppMessage CreateRootMessage(PushAgent agent)
+        private AppMessage CreateRootMessage(PushAgent agent, string purpose)
         {
-            return CreateMessage(agent, agent.AgentPurpose);
+            return CreateMessage(agent, agent.RootMessage, purpose);
         }
 
-        private AppMessage CreateFollowUpMessage(PushAgent agent)
+        private AppMessage CreateFollowUpMessage(PushAgent agent, string purpose)
         {
-            return CreateMessage(agent, agent.UserPrompt);
+            return CreateMessage(agent, agent.UserPrompt, purpose);
         }
 
-        private AppMessage CreateMessage(PushAgent agent, string rootText)
+        private AppMessage CreateMessage(PushAgent agent, string rootText, string purpose)
         {
             var text = @$"
 {agent.PromptPrefix}
 
 {rootText}
+
+Make sure the message is aligned and use my personal purpose that is as follows:
+{purpose}
 
 {agent.PromptSuffix}
 
@@ -107,6 +119,11 @@ key: decline
                 ProviderKey = agent.AppUserId,
                 UtcDateTime = DateTime.UtcNow,
             };
+        }
+
+        private string GetGenericPurpose()
+        {
+            return ConfigManager.GetOrDefault("GenericPurpose", "Be a better person and be more healthy");
         }
 
     }

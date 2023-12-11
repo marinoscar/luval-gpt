@@ -15,6 +15,8 @@ namespace Luval.GPT.Data
 
         Task<IEnumerable<AppMessage>> GetFirstConversationHistory(AppMessage message, int? top);
 
+
+        AppUserPurpose? GetPurpose(string userId);
         AppMessage GetAppMessage(ulong id);
         IEnumerable<PushAgent> GetPushAgents();
         IEnumerable<PushAgent> GetPushAgents(string userId);

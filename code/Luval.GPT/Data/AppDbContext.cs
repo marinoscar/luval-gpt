@@ -25,6 +25,8 @@ namespace Luval.GPT.Data
 
         public DbSet<Device> Devices { get; set; }
 
+        public DbSet<AppUserPurpose> AppUserPurposes { get; set; }
+
 
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace Luval.GPT.Data
             {
                 await PushAgents.AddAsync(new PushAgent()
                 {
-                    AgentPurpose = GetRootMessage(),
+                    RootMessage = GetRootMessage(),
                     UserPrompt = GetFollowUpMessage(),
                     Description = "Rev up your fitness journey with our AI-powered Gym Motivation feature. Tailored to your personal goals, it delivers inspiring messages right when you need them most. Schedule notifications to fit your routine, keeping you focused and energized for every workout. Stay inspired, stay fit!",
                     ChronExpression = "0 18 * * 1-4",
@@ -117,6 +119,17 @@ namespace Luval.GPT.Data
             }
         }
 
+        private async Task TaskInitAppUserPurpose(CancellationToken cancellationToken = default)
+        {
+            if (AppUserPurposes != null && !AppUserPurposes.Any())
+            {
+                await AppUserPurposes.AddAsync(new AppUserPurpose() { 
+                    AppUserId = AdminUserId,
+                    Purpose = GetPurpose()
+                }, cancellationToken);
+            }
+        }
+
         private string GetRootMessage()
         {
             return GetRootHeaderMessage() + "\n" + GetPurpose();
@@ -132,9 +145,7 @@ Great! I need another message!
         private string GetRootHeaderMessage()
         {
             return @"
-I am looking to get motivated to go to the gym, I am not feeling like going right now, I need a message to motivate me to go to the gym, can you please write something use my personal purpose statement as a baseline for the message.
-
-Personal purpose statement:
+I am looking to get motivated to go to the gym, I am not feeling like going right now, I need a message to motivate me to go to the gym
 ";
         }
 

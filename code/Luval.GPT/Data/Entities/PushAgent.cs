@@ -21,7 +21,7 @@ namespace Luval.GPT.Data.Entities
         public string? AppUserId { get; set; }
 
         [Required]
-        public string? AgentPurpose { get; set; }
+        public string? RootMessage { get; set; }
         public string? UserPrompt { get; set; }
         public string? PromptPrefix { get; set; }
         public string? PromptSuffix { get; set; }

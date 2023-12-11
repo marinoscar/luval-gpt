@@ -43,6 +43,11 @@ namespace Luval.GPT.Data
             return device;
         }
 
+        public AppUserPurpose? GetPurpose(string userId)
+        {
+            return _dbContext.AppUserPurposes.FirstOrDefault(i => i.AppUserId == userId);
+        }
+
         public void UpdateAppMessage(AppMessage message)
         {
             var i = _dbContext.AppMessages.Attach(message);

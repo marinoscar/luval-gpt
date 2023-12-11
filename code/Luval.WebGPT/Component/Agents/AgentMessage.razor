@@ -4,21 +4,29 @@
 
 @inject AgentPresenter presenter
 
-@if(Message != null)
+@if (Message != null && Message.Result != null && Message.Status == ServiceStatus.Completed)
 {
-    <div class="row">
-        <div class="col">
-            <h1>@Message.MessageData</h1>
-            <hr />
-            <p>
-                @Message.AgentText
-            </p>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">
+                @Message.Result.MessageData
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                @Message.Result.AgentText
+             </p>
+            <a class="btn btn-primary">Like</a>
         </div>
     </div>
 }
+else if (Message != null && Message.Status == ServiceStatus.Fail)
+{
+    <h3>Failed to load: @Message.Message</h3>
+}
 else
 {
-    <h1>Not found</h1>
+    <h3><i class="c-inline-spinner"></i> Loading...</h3>
 }
 
 
@@ -29,7 +37,7 @@ else
     [Parameter]
     public string? AgentId { get; set; }
 
-    public AppMessage Message { get; set; }
+    public ServiceResponse<AppMessage> Message { get; set; }
 
     protected override void OnInitialized()
     {
@@ -39,16 +47,14 @@ else
 
     private async Task Load()
     {
-        var r = await presenter.LoadMessage(AgentId, MessageId, Callback);
-        if(r.Status == ServiceStatus.Completed)
-        {
-            Message = r.Result;
+        Message = await presenter.LoadMessage(AgentId, MessageId, Callback);
+
+        if (Message.Status == ServiceStatus.Completed)
             this.StateHasChanged();
-        }
     }
 
     private void Callback(ServiceResponse<AppMessage> r)
     {
-        
+
     }
 }

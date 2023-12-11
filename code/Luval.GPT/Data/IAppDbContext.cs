@@ -14,6 +14,7 @@ namespace Luval.GPT.Data
         DbSet<PushAgent> PushAgents { get; set; }
         DbSet<PushAgentSubscription> PushAgentSubscriptions { get; set; }
         DbSet<Device> Devices { get; set; }
+        DbSet<AppUserPurpose> AppUserPurposes { get; set; }
 
         Task<int> SeedDataAsync(CancellationToken cancellationToken = default);
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
