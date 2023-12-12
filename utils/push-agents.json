@@ -1,0 +1,30 @@
+[
+  {
+    "Id": 1, /* This will update the entry */
+    "Name": "Gym Motivation Agent",
+    "Description": "Rev up your fitness journey with our AI-powered Gym Motivation feature. Tailored to your personal goals, it delivers inspiring messages right when you need them most. Schedule notifications to fit your routine, keeping you focused and energized for every workout. Stay inspired, stay fit!",
+    "ImageUrl": "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/gym-icon.png",
+    "IsPublic": true,
+    "RootMessage": "\r\nI am looking to get motivated to go to the gym, I am not feeling like going right now, I need a message to motivate me to go to the gym\r\n",
+    "UserPrompt": "\r\nGreat! I need another message!\r\n",
+    "PromptPrefix": "",
+    "PromptSuffix": "\r\n* Start the message with ^^^\r\n* Do not exceed 1000 characters\r\n* Include a few emojis\r\n* Remember that my name is Oscar\r\n* Do not include any Hashatags\r\n* End the message with ^^^\r\n",
+    "SystemMessage": "You are a helpful assistant",
+    "Timezone": "Central Standard Time",
+    "ChronExpression": "*/2 * * * *"
+  },
+  {
+    "Id": 0 /* This will create a new entry */
+    "Name": "Spiritual Agent",
+    "Description": "This agent will provide comforting passages of the New Testament for you. Whether you're deepening your faith, seeking spiritual guidance, or simply looking for daily encouragement, this agent is your perfect companion.",
+    "ImageUrl": "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/gym-icon.png",
+    "IsPublic": true,
+    "RootMessage": "I am looking to be a more spiritu",
+    "UserPrompt": "\r\nGreat! I need another message!\r\n",
+    "PromptPrefix": "",
+    "PromptSuffix": "\r\n* Start the message with ^^^\r\n* Do not exceed 1000 characters\r\n* Include a few emojis\r\n* Remember that my name is Oscar\r\n* Do not include any Hashatags\r\n* End the message with ^^^\r\n",
+    "SystemMessage": "You are a helpful assistant",
+    "Timezone": "Central Standard Time",
+    "ChronExpression": "*/2 * * * *"
+  }
+]

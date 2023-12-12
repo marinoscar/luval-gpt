@@ -13,6 +13,7 @@ using Luval.OpenAI.Models;
 using Luval.WebGPT.Presenter;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
 using System.Security.Claims;
@@ -149,6 +150,13 @@ namespace Luval.WebGPT
             var cs = new PushAgentChronService(s.GetRequiredService<ILogger>(), repo,
                 gpt, push, refreshInterval, startOn, TimeSpan.FromMinutes(tickInMinutes));
             return cs;
+        }
+
+        public static void Create()
+        {
+            var db = CreateAppDbContext();
+            var item = db.PushAgents.First();
+            var json = JsonConvert.SerializeObject(item, Formatting.Indented);
         }
     }
 }

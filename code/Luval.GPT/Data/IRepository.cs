@@ -4,7 +4,11 @@ namespace Luval.GPT.Data
 {
     public interface IRepository
     {
-        
+
+
+        Task<int> UpdateOrCreatePushAgent(IEnumerable<PushAgent> agents);
+        Task<PushAgent> CreateAgent(PushAgent agent);
+        Task<PushAgent> UpdateAgent(PushAgent agent);
         AppUser? GetApplicationUser(string providerName, string providerKey);
 
 

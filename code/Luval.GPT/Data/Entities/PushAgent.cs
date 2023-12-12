@@ -12,6 +12,12 @@ namespace Luval.GPT.Data.Entities
 {
     public class PushAgent : IdentityEntity
     {
+        public PushAgent()
+        {
+            Timezone = "Central Standard Time";
+            SystemMessage = "You are a helpful assistant";
+        }
+
         [Required, MaxLength(1000)]
         public string? Name { get; set; }
         [MaxLength(500)]

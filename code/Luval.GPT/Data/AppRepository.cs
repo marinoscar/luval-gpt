@@ -25,6 +25,38 @@ namespace Luval.GPT.Data
             return message;
         }
 
+        public async Task<int> UpdateOrCreatePushAgent(IEnumerable<PushAgent> agents)
+        {
+            foreach (var agent in agents)
+            {
+                if(agent.Id <= 0)
+                    await CreateAgent(agent);
+                else
+                    await UpdateAgent(agent);
+            }
+            return agents.Count();
+        }
+
+        public async Task<PushAgent> CreateAgent(PushAgent agent)
+        {
+            await _dbContext.PushAgents.AddAsync(agent);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            await _dbContext.PushAgentSubscriptions.AddAsync(new PushAgentSubscription()
+            {
+                AppUserId = agent.AppUserId, PushAgentId = agent.Id
+            });
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            return agent;
+        }
+
+        public async Task<PushAgent> UpdateAgent(PushAgent agent)
+        {
+            var entity = _dbContext.PushAgents.Attach(agent);
+            entity.State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            return agent;
+        }
+
         public Device RegisterDevice(Device device)
         {
             if (device == null) throw new ArgumentNullException(nameof(device));
@@ -149,7 +181,7 @@ namespace Luval.GPT.Data
         private Task<IEnumerable<AppMessage>> GetAllMessagesAsync(Func<AppMessage, bool> predicate)
         {
             return Task.Run(() => { return _dbContext.AppMessages.Where(predicate); });
-        } 
+        }
 
         #endregion
 
