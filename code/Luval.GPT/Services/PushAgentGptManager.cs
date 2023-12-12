@@ -43,7 +43,8 @@ namespace Luval.GPT.Services
 
         public async Task<AppMessage> GetMessageAsync(PushAgent agent, string purpose)
         {
-            var history = await _repository.GetFirstConversationHistory(CreateRootMessage(agent, purpose), 20);
+            var history = (await _repository.GetFirstConversationHistory(CreateRootMessage(agent, purpose), 20)).ToList();
+
             var message = history.Any() ? CreateFollowUpMessage(agent, purpose) : CreateRootMessage(agent, purpose);
             var response = await _agentService.ExecuteAsync(new PromptAgentServiceInput() { History = history, Message = message }, CancellationToken.None);
             if (response.Status != ServiceStatus.Completed) throw new Exception($"Unable to complete prompt request. Error: {response.Message}", response.Exception);
@@ -64,7 +65,7 @@ namespace Luval.GPT.Services
 This message will be part of an application to provide motivation to the users, I need to create a notification for the mobile apps that will new following information
 
 Title: Short text to allow the user to click
-Call to Action: very short text to motivate the user to click on the notification and read the content, include an emoji at the beginning
+Call to Action: very short text to motivate the user to click on the notification and read the content, no more than 5 words, include an emoji at the beginning
 Decline button text: Funny and short text to ignore the message, include an emoji at the beginning
 
 Here is the message:

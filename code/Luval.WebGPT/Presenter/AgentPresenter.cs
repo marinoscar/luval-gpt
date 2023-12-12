@@ -39,7 +39,6 @@ namespace Luval.WebGPT.Presenter
             {
                 Status = ServiceStatus.Completed
             };
-            if (agentId == null) throw new ArgumentNullException(nameof(agentId));
             try
             {
                 if (messageId == null)

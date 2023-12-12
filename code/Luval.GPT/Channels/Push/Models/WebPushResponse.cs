@@ -24,7 +24,7 @@ namespace Luval.GPT.Channels.Push.Models
                 Silent = false,
                 Vibrate = new[] { 200, 100, 200 },
                 Data = new Dictionary<string, object> {
-                    { "navigateTo", $"{webSite}/{ MessageContent.Id }"}
+                    { "navigateTo", $"{webSite}/Message/{ MessageContent.Id }"}
                 },
                 Actions = new List<NotificationAction>() {
                     new() { Title = actionModel.CallToAction, Action = "explore" },

@@ -23,6 +23,7 @@ namespace Luval.GPT.Services
         private DateTime? _lastUpdate;
         private readonly PushAgentGptManager _pushManager;
         private readonly PushClient _pushClient;
+        private readonly ILogger _logger;
 
         #region Constructors
 
@@ -48,6 +49,7 @@ namespace Luval.GPT.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _subscriptionData = new List<SubscriptionData>();
             _pushClient = pushClient ?? throw new ArgumentNullException(nameof(pushClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
 
@@ -55,20 +57,23 @@ namespace Luval.GPT.Services
         private void InitSubscription()
         {
             if (_lastUpdate != null && DateTime.UtcNow.Subtract(_lastUpdate.Value).TotalMinutes < _subscriptionRefreshInterval) return;
+
+            Logger.LogDebug("Initializing agent configuraration");
+
             var newList = new List<SubscriptionData>();
-            var agents = _repository.GetPushAgents();
+            var agents = _repository.GetPushAgents().ToList();
             foreach (var agent in agents)
             {
-                var subs = _repository.GetSubscriptions(agent.Id);
+                var subs = _repository.GetSubscriptions(agent.Id).ToList();
                 if (subs != null && subs.Any())
                     foreach (var sub in subs)
                     {
-                        var devices = _repository.GetDevicesFromUser(sub.AppUserId);
+                        var devices = _repository.GetDevicesFromUser(sub.AppUserId).ToList();
                         newList.Add(new SubscriptionData()
                         {
                             Agent = agent,
                             Subscription = sub,
-                            Evaluator = new ChronEvaluator(agent.ChronExpression, agent.Timezone ?? "Central Standard Time"),
+                            Evaluator = new ChronEvaluator(agent.ChronExpression, agent.Timezone ?? "Central Standard Time", Logger),
                             Devices = devices.ToList(),
                         });
                     }
@@ -87,20 +92,24 @@ namespace Luval.GPT.Services
                     sub.Evaluator != null &&
                     sub.Evaluator.EvaluateNow(false, false))
                 {
-                    foreach (var d in sub.Devices)
+                    var devices = this._repository.GetDevicesFromUser(sub.Subscription.AppUserId).ToList();
+                    foreach (var d in devices)
                     {
                         if (d == null) continue;
-                        Task.Run(() => RunPushAgent(sub, d));
+                        Task.Factory.StartNew(() => RunPushAgent(sub, d));
                     }
                 }
             }
         }
 
-        private void RunPushAgent(SubscriptionData agentData, Device device)
+        private  async Task  RunPushAgent(SubscriptionData agentData, Device device)
         {
-            var managerTask = _pushManager.ProcessPushAgentAsync(agentData.Agent);
-            var res = managerTask.Result;
+            var res = await _pushManager.ProcessPushAgentAsync(agentData.Agent);
+
             var options = res.GetOptions(ConfigManager.Get("WebPushUrl"), null);
+
+            _logger.LogDebug($"Issuing Notification for: {agentData.Agent.Name} user {agentData.Agent.AppUserId} and device {device.Id}");
+
             _pushClient.Send(options,
                 new PushSubscription(device.Endpoint,
                 device.P256DH,

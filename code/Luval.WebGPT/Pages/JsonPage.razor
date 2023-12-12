@@ -1,0 +1,36 @@
+﻿@page "/JsonEditor"
+@using Luval.WebGPT.Component.Auth
+@using Luval.WebGPT.Component.CodeEditor
+
+<LoginControl></LoginControl>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="row">
+            <div class="col-7">
+                <input id="form-endpoint" type="text" class="form-control" placeholder="Controller Route">
+            </div>
+            <div class="col">
+                <select id="form-method" class="form-select">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="UPDATE">UPDATE</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" style="padding-top: 10px">
+                <h4>Payload</h4>
+                <JsonEditor HtmlElementId="jsonEditor" Language="Json" Width="95%"></JsonEditor>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+}

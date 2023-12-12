@@ -91,7 +91,7 @@ namespace Luval.GPT.Data
 
         public IEnumerable<PushAgent> GetPushAgents()
         {
-            return _dbContext.PushAgents;
+            return _dbContext.PushAgents.Where(i => i.Id > 0).ToList();
         }
 
         public IEnumerable<PushAgent> GetPushAgents(string userId)

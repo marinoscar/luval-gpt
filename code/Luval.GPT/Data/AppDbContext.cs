@@ -39,6 +39,7 @@ namespace Luval.GPT.Data
             await InitAgentAsync(cancellationToken);
             await InitUsersAsync(cancellationToken);
             await InitPushAgentAsync(cancellationToken);
+            await TaskInitAppUserPurpose(cancellationToken);
             return await SaveChangesAsync(cancellationToken);
         }
 
@@ -98,15 +99,16 @@ namespace Luval.GPT.Data
         {
             if (PushAgents != null && !PushAgents.Any())
             {
+                var agent =  
                 await PushAgents.AddAsync(new PushAgent()
                 {
-                    RootMessage = GetRootMessage(),
+                    RootMessage = GetRootHeaderMessage(),
                     UserPrompt = GetFollowUpMessage(),
                     Description = "Rev up your fitness journey with our AI-powered Gym Motivation feature. Tailored to your personal goals, it delivers inspiring messages right when you need them most. Schedule notifications to fit your routine, keeping you focused and energized for every workout. Stay inspired, stay fit!",
                     ChronExpression = "0 18 * * 1-4",
-                    ChronExpressionPrompt = "write a chron expression for monday, tuesday, wednesday, thursday at 6PM in the evening",
+                    ChronExpressionPrompt = "",
                     Name = "Gym Motivation Agent",
-                    ImageUrl = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/001-square.png",
+                    ImageUrl = "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/gym-icon.png",
                     IsPublic = true,
                     PromptSuffix = GetSuffix(),
                     AppUserId = AdminUserId,
@@ -114,8 +116,18 @@ namespace Luval.GPT.Data
                     SystemMessage = "You are a helpful assistant",
                     PromptPrefix = string.Empty,
                     CreatedBy = AdminUserId,
-                    UpdatedBy = AdminUserId
-                }); ;
+                    UpdatedBy = AdminUserId 
+                });
+                await SaveChangesAsync(cancellationToken);
+                if(PushAgentSubscriptions != null)
+                {
+                    await PushAgentSubscriptions.AddAsync(new PushAgentSubscription()
+                    {
+                        AppUserId = AdminUserId,
+                        PushAgentId = agent.Entity.Id
+                    }, cancellationToken);
+                    await SaveChangesAsync(cancellationToken);
+                }
             }
         }
 
@@ -128,11 +140,6 @@ namespace Luval.GPT.Data
                     Purpose = GetPurpose()
                 }, cancellationToken);
             }
-        }
-
-        private string GetRootMessage()
-        {
-            return GetRootHeaderMessage() + "\n" + GetPurpose();
         }
 
         private string GetFollowUpMessage()

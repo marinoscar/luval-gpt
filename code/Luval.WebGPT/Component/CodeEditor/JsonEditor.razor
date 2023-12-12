@@ -1,0 +1,43 @@
+﻿
+<div id="@HtmlElementId" style="width: @Width; height: @Height; border: 1px solid grey"></div>
+
+<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
+<script src="../monaco/min/vs/loader.js"></script>
+<script>
+	require.config({ paths: { vs: '../monaco/min/vs' } });
+
+	require(['vs/editor/editor.main'], function () {
+		var editor = monaco.editor.create(document.getElementById("@HtmlElementId"), {
+			value: ['{', '}'].join('\n'),
+			language: '@Language.ToLowerInvariant()'
+		});
+	});
+</script>
+
+
+@code {
+
+	//Example: https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-editor/index.html
+
+	[Parameter]
+	public string HtmlElementId { get; set; }
+
+	[Parameter]
+	public string Language { get; set; }
+
+	[Parameter]
+	public string Width { get; set; }
+
+	[Parameter]
+	public string Height { get; set; }
+
+	public JsonEditor()
+	{
+		Language = "javascript";
+		HtmlElementId = "monaco-editor";
+		Width = "800px";
+		Height = "600px";
+	}
+
+	
+}

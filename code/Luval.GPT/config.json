@@ -5,5 +5,7 @@
   "WebPushUrl": "https://localhost:7000",
   "VAPISubject": "mailto:oscar@marin.cr",
   "VAPIKey": "BL9RcpyewdWDZYqHQ2sIQ1FjVtGHak1_L9yL-_K6vHEECOtPkMuh8Y9GmPoXXRe2wC5zoALlTukGfPUtT5iS32U",
+  "PushAgentChronRefresh": "30",
+  "PushAgentChronTickInMinutes": "1",
   "GenericPurpose": "Embark on a transformative journey towards a healthier, fitter, and more vibrant you. Whether you're looking to shed excess weight, build muscle, increase stamina, or simply enhance your overall well-being, our tailored fitness program is designed to empower you with the knowledge, motivation, and guidance needed to achieve your personal goals. Join us on this path to better health and discover a newfound sense of energy, confidence, and vitality as you sculpt the body and lifestyle you've always desired."
 }

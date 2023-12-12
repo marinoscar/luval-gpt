@@ -12,16 +12,16 @@
 @inject IHttpContextAccessor context
 
 
-<div id="GiveAccess" style="display:none;">
+<div id="GiveAccess">
     Give access to making notifications:
-    <button class="btn btn-primary" id="PromptForAccessBtn">Prompt</button>
+    <button class="btn btn-primary" id="PromptForAccessBtn" @onclick="AskForPermission">Prompt</button>
 </div>
 
 <div id="NoSupport" style="display:none;">
     Your browser does not support Push Notifications or you have blocked notifications
 </div>
 
-<form method="post" id="form" style="display:none;" @onsubmit="presenter.RegisterDevice">
+<form method="post" id="form"  @onsubmit="presenter.RegisterDevice">
     <input id="endpoint" hidden />
     <input id="p256dh" hidden />
     <input id="auth" hidden />
@@ -38,8 +38,13 @@
     {
         presenter.Js = js;
         presenter.Sub.User = context.HttpContext.User.ToUser();
-        
+
         base.OnInitialized();
+    }
+
+    void AskForPermission()
+    {
+        js.InvokeVoidAsync("requestNotificationAccess");
     }
 
 }

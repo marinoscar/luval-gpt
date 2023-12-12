@@ -6,6 +6,7 @@ using Luval.WebGPT;
 using Org.BouncyCastle.Security;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
+using Luval.GPT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,8 @@ builder.Services
     .AddGoogleAuth()
     .AddRepositories()
     .AddServices()
-    .AddPresenters();
+    .AddPresenters()
+    .AddAppHostedServices();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
