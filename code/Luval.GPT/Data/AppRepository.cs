@@ -51,8 +51,9 @@ namespace Luval.GPT.Data
 
         public async Task<PushAgent> UpdateAgent(PushAgent agent)
         {
-            var entity = _dbContext.PushAgents.Attach(agent);
-            entity.State = EntityState.Modified;
+            var entity = _dbContext.PushAgents.Find(agent.Id);
+            if (entity == null) return agent;
+            _dbContext.PushAgents.Entry(entity).CurrentValues.SetValues(agent);
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             return agent;
         }
@@ -90,6 +91,11 @@ namespace Luval.GPT.Data
         public AppUser? GetApplicationUser(string providerName, string providerKey)
         {
             return _dbContext.AppUsers.FirstOrDefault(i => i.ProviderName == providerName && i.ProviderKey == providerKey);
+        }
+
+        public AppUser? GetApplicationUser(string userId)
+        {
+            return _dbContext.AppUsers.FirstOrDefault(i => i.Id == userId);
         }
 
         public async Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? lastNumberOfRecords)

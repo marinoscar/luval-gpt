@@ -1,4 +1,6 @@
-﻿
+﻿@inject IJSRuntime js
+
+
 <div id="@HtmlElementId" style="width: @Width; height: @Height; border: 1px solid grey"></div>
 
 <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
@@ -7,11 +9,15 @@
 	require.config({ paths: { vs: '../monaco/min/vs' } });
 
 	require(['vs/editor/editor.main'], function () {
-		var editor = monaco.editor.create(document.getElementById("@HtmlElementId"), {
-			value: ['{', '}'].join('\n'),
+		window.monacoEditor = monaco.editor.create(document.getElementById("@HtmlElementId"), {
 			language: '@Language.ToLowerInvariant()'
 		});
 	});
+
+	function getMonacoEditorText(){
+		return window.monacoEditor.getValue();
+	}
+
 </script>
 
 
@@ -31,13 +37,20 @@
 	[Parameter]
 	public string Height { get; set; }
 
-	public JsonEditor()
+	public CodeEditor()
 	{
 		Language = "javascript";
 		HtmlElementId = "monaco-editor";
 		Width = "800px";
 		Height = "600px";
 	}
+
+	public ValueTask<string> GetValue()
+	{
+		return js.InvokeAsync<string>("getMonacoEditorText");
+	}
+
+
 
 	
 }

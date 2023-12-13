@@ -10,6 +10,7 @@ namespace Luval.GPT.Data
         Task<PushAgent> CreateAgent(PushAgent agent);
         Task<PushAgent> UpdateAgent(PushAgent agent);
         AppUser? GetApplicationUser(string providerName, string providerKey);
+        AppUser? GetApplicationUser(string userId);
 
 
         Task<IEnumerable<AppMessage>> GetLastConversationHistory(AppMessage message, int? numberOfRecords);

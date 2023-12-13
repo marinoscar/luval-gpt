@@ -104,6 +104,7 @@ namespace Luval.WebGPT
         {
             s.AddScoped<NotificationPresenter>();
             s.AddScoped<AgentPresenter>();
+            s.AddScoped<ControllerClientPresenter>();
             return s;
         }
 
@@ -152,11 +153,5 @@ namespace Luval.WebGPT
             return cs;
         }
 
-        public static void Create()
-        {
-            var db = CreateAppDbContext();
-            var item = db.PushAgents.First();
-            var json = JsonConvert.SerializeObject(item, Formatting.Indented);
-        }
     }
 }

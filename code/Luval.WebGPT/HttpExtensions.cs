@@ -1,6 +1,10 @@
-﻿using Luval.GPT.Data.Entities;
+﻿using Luval.Framework.Core;
+using Luval.Framework.Core.Configuration;
+using Luval.GPT.Data.Entities;
 using Luval.WebGPT.Data.ViewModel;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 
 namespace Luval.WebGPT
 {
@@ -42,6 +46,11 @@ namespace Luval.WebGPT
             return GetBaseUrl(context.Request);
         }
 
+        public static string? GetBaseUrl(this IHttpContextAccessor context)
+        {
+            return GetBaseUrl(context.HttpContext.Request);
+        }
+
         public static HttpClient CreateAppClient(this IHttpClientFactory factory, IHttpContextAccessor context)
         {
             var http = factory.CreateClient();
@@ -54,6 +63,39 @@ namespace Luval.WebGPT
             if (c == null) return false;
             return c != null && c.HttpContext != null && c.HttpContext.User != null && c.HttpContext.User.Identity != null &&
                 c.HttpContext.User.Identity.IsAuthenticated;
+        }
+
+        public static Task<HttpResponseMessage> PostJsonLocalAsync(this HttpClient c, string baseUrl, string route, string payload)
+        {
+            return SendJsonLocalAsync(c, baseUrl, route, HttpMethod.Post, payload);
+        }
+
+        public static Task<HttpResponseMessage> GetJsonLocalAsync(this HttpClient c, string baseUrl, string route, string payload)
+        {
+            return SendJsonLocalAsync(c, baseUrl, route, HttpMethod.Get, payload);
+        }
+
+        public static Task<HttpResponseMessage> SendJsonLocalAsync(this HttpClient c, string baseUrl, string route, HttpMethod method, string payload)
+        {
+            var key = DateTime.UtcNow.ToString().Encrypt(ConfigManager.Get("EncryptionKey"));
+            var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+            if (!string.IsNullOrEmpty(route) && route.EndsWith("/"))
+            {
+                route = route.Remove(route.Length - 1);
+            }
+
+            c.DefaultRequestHeaders.Add("Accept", "application/json");
+            c.DefaultRequestHeaders.Add("AppToken", key);
+            var requestUrl = new Uri(baseUrl + route);
+            var request = new HttpRequestMessage()
+            {
+                Content = content,
+                Method = method,
+                RequestUri = requestUrl
+            };
+
+            return c.SendAsync(request);
         }
     }
 }

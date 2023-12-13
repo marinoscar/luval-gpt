@@ -7,8 +7,11 @@ using Org.BouncyCastle.Security;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
 using Luval.GPT.Services;
+using Luval.Framework.Core;
+using Luval.Framework.Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add controllers
 builder.Services.AddControllers();
@@ -54,9 +57,16 @@ app.UseAuthentication();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
+//app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+var e = DateTime.UtcNow.ToString().Encrypt(ConfigManager.Get("EncryptionKey"));
+Console.WriteLine(e);
+var d = e.Decrypt(ConfigManager.Get("EncryptionKey"));
+Console.WriteLine(d);
 
 
 

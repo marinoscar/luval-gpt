@@ -1,6 +1,10 @@
 ﻿@page "/JsonEditor"
 @using Luval.WebGPT.Component.Auth
 @using Luval.WebGPT.Component.CodeEditor
+@using Luval.WebGPT.Presenter
+
+@inject IHttpContextAccessor contextAccesor
+@inject ControllerClientPresenter presenter
 
 <LoginControl></LoginControl>
 
@@ -8,29 +12,65 @@
     <Authorized>
         <div class="row">
             <div class="col-7">
-                <input id="form-endpoint" type="text" class="form-control" placeholder="Controller Route">
+                <input id="form-endpoint" type="text" class="form-control" placeholder="Controller Route" @bind="Route">
             </div>
             <div class="col">
-                <select id="form-method" class="form-select">
+                <select id="form-method" class="form-select" @bind="Method">
                     <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="UPDATE">UPDATE</option>
+                    <option value="POST" selected>POST</option>
+                    <option value="PUT">PUT</option>
                     <option value="DELETE">DELETE</option>
                 </select>
             </div>
             <div class="col">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" @onclick="Submit">Submit</button>
             </div>
         </div>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ErrorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Success))
+        {
+            <div class="alert alert-success" role="alert">
+                @Success
+            </div>
+        }
         <div class="row">
             <div class="col" style="padding-top: 10px">
                 <h4>Payload</h4>
-                <JsonEditor HtmlElementId="jsonEditor" Language="Json" Width="95%"></JsonEditor>
+                <CodeEditor @ref="_editor" HtmlElementId="jsonEditor" Language="Json" Width="95%"></CodeEditor>
             </div>
         </div>
     </Authorized>
 </AuthorizeView>
 
 @code {
+    private CodeEditor? _editor;
+
+    string? ErrorMessage { get; set; }
+    string? Success { get; set; }
+    string? Route { get; set; }
+    string? Method { get; set; }
+
+    private async Task Submit()
+    {
+        if (_editor == null) return;
+        var content = await _editor.GetValue();
+        var res = await presenter.SendAsync(Route, Method, content);
+        if (res.IsSuccessStatusCode)
+            Success = "Operation completed successfully";
+        else
+            ErrorMessage = $"Failed with code {res.StatusCode} {res.ErrorMessage}";
+
+    }
+
+    public JsonPage()
+    {
+        Method = "POST";
+    }
 
 }
