@@ -1,19 +1,24 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Luval.Framework.Core.Cache;
+using Luval.GPT.Data.Entities;
+using Luval.GPT.Data;
+using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Data;
 
 namespace Luval.WebGPT.Presenter
 {
-    public class SqlPresenter
+    public class SqlPresenter : PresenterBase
     {
 
-        public SqlPresenter()
+        public SqlPresenter(ILogger logger, IRepository repository, IHttpContextAccessor context, ICacheProvider<string, AppUser> userCache) : base(logger, repository, context, userCache)
         {
             QueryResult = CreateTable();
         }
 
         public void GetSqlQueryResult(string sql)
         {
+            Task.Delay(2000).Wait();
+
             QueryResult.Clear();
             using (var conn = CreateConnection())
             {

@@ -32,5 +32,37 @@ namespace Luval.WebGPT.Presenter
             return user;
 
         }
+
+        /// <summary>
+        /// Indicates if the presenter is working
+        /// </summary>
+        public virtual bool IsWorking { get; private set; }
+
+        public virtual void Run(Action action)
+        {
+            IsWorking = true;
+            try
+            {
+                action();
+            }
+            finally
+            {
+                IsWorking = false;
+            }
+        }
+
+        public virtual async Task RunAsync(Func<Task> action)
+        {
+            IsWorking = true;
+            try
+            {
+                await action();
+            }
+            finally
+            {
+                IsWorking = false;
+            }
+        }
+
     }
 }

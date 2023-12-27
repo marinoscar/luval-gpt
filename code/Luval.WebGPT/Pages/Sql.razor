@@ -1,12 +1,8 @@
 ﻿@page "/Sql"
 
-
-@using Luval.WebGPT.Component.Auth
-@using Luval.WebGPT.Component.CodeEditor
-@using Luval.WebGPT.Presenter
-
 @inject SqlPresenter presenter
 
+<Spinner ShowSpinner="presenter.IsWorking"></Spinner>
 
 <AuthorizeView>
     <Authorized>
@@ -55,10 +51,13 @@
 
 
 
-    private async Task RunQuery()
+    private Task RunQuery()
     {
-        if (_editor == null) return;
-        var content = await _editor.GetValue();
-        presenter.GetSqlQueryResult(content);
+        return presenter.RunAsync(async () =>
+        {
+            if (_editor == null) return;
+            var content = await _editor.GetValue();
+            presenter.GetSqlQueryResult(content);
+        });
     }
 }

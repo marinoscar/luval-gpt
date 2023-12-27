@@ -1,0 +1,11 @@
+﻿@if (ShowSpinner)
+{
+    <div class="loading">Loading&#8230;</div>
+}
+
+@code {
+
+    [Parameter]
+    public bool ShowSpinner { get; set; }
+
+}
