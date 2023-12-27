@@ -1,6 +1,8 @@
-﻿using Luval.Framework.Core.Configuration;
+﻿using Luval.Framework.Core.Cache;
+using Luval.Framework.Core.Configuration;
 using Luval.GPT.Channels.Push;
 using Luval.GPT.Data;
+using Luval.GPT.Data.Entities;
 using Luval.GPT.Data.MySql;
 using Luval.GPT.GPT;
 using Luval.GPT.GPT.OpenAI;
@@ -54,9 +56,19 @@ namespace Luval.WebGPT
             return s;
         }
 
+        public static IServiceCollection AddCacheProviders(this IServiceCollection s)
+        {
+            s.AddSingleton<ICacheProvider<string, AppUser>>(
+                new CacheProvider<string, AppUser>("Users", new TimeExpirationPolicyFactory(TimeSpan.FromMinutes(45)), 
+                new StaticMemoryCacheStorage<string, AppUser>()
+                ));
+
+            return s;
+        }
+
         public static IServiceCollection AddGoogleAuth(this IServiceCollection s)
         {
-            if (!ConfigManager.IsInitialized()) throw new Exception($"An instance of {typeof(ConfigManager)} this to be initialized");
+            if (!ConfigManager.IsInitialized()) throw new Exception($"An instance of {typeof(ConfigManager)} needs to be initialized");
             s.AddAuthentication("Cookies")
                 .AddCookie(opt =>
                 {
@@ -72,6 +84,7 @@ namespace Luval.WebGPT
                     opt.Events.OnCreatingTicket = context =>
                     {
                         context?.Identity?.AddClaim(new Claim("providerName", "Google"));
+                        CheckForAdmin(context?.Identity);
                         return Task.CompletedTask;
                     };
                 });
@@ -81,8 +94,13 @@ namespace Luval.WebGPT
 
         public static AppDbContext CreateAppDbContext()
         {
-            var conn = Debugger.IsAttached ? ConfigManager.Get("DbConnection") : ConfigManager.Get("ProdDbConnection");
+            var conn = GetConnectionString();
             return new MySqlAppDbContext(conn);
+        }
+
+        public static string GetConnectionString()
+        {
+            return Debugger.IsAttached ? ConfigManager.Get("DbConnection") : ConfigManager.Get("ProdDbConnection");
         }
 
         public static IServiceCollection AddDbContext(this IServiceCollection s)
@@ -105,7 +123,26 @@ namespace Luval.WebGPT
             s.AddScoped<NotificationPresenter>();
             s.AddScoped<AgentPresenter>();
             s.AddScoped<ControllerClientPresenter>();
+            s.AddScoped<SqlPresenter>();
             return s;
+        }
+
+        private static void CheckForAdmin(ClaimsIdentity identity)
+        {
+            if (identity == null) return;
+            if (!identity.Claims.Any()) return;
+            if (!identity.HasClaim(i => i.Type == ClaimTypes.Email)) return;
+
+            var email = identity.Claims.FirstOrDefault(i => i.Type == ClaimTypes.Email)?.Value;
+
+            if (email == null) return;
+
+            var validEmails = ConfigManager.GetOrDefault("AdminEmails", "")
+                .Split(';').Select(i => i.ToLowerInvariant().Trim());
+
+            if (validEmails.Any() && validEmails.Contains(email.ToLowerInvariant().Trim()))
+                identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
+
         }
 
         private static ChatEndpoint CreateChatEndpoint()

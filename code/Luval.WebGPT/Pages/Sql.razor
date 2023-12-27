@@ -1,0 +1,64 @@
+﻿@page "/Sql"
+
+
+@using Luval.WebGPT.Component.Auth
+@using Luval.WebGPT.Component.CodeEditor
+@using Luval.WebGPT.Presenter
+
+@inject SqlPresenter presenter
+
+
+<AuthorizeView>
+    <Authorized>
+        <button type="button" class="btn btn-primary" @onclick="RunQuery">Run Query</button>
+        <CodeEditor @ref="_editor" HtmlElementId="jsonEditor" Language="Sql" Width="95%" Height="350px">
+
+        </CodeEditor>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    @foreach (var item in presenter.QueryResult.Take(1))
+                    {
+                        <tr>
+                            @foreach (var col in item.Keys)
+                            {
+                                <th scope="col">
+                                    @item[col]
+                                </th>
+                            }
+                        </tr>
+                    }
+                </thead>
+                <tbody>
+                    @foreach (var item in presenter.QueryResult.Skip(1))
+                    {
+                        <tr>
+                            @foreach (var col in item.Keys)
+                            {
+                                <td>
+                                    @item[col]
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    private CodeEditor? _editor;
+
+
+
+
+    private async Task RunQuery()
+    {
+        if (_editor == null) return;
+        var content = await _editor.GetValue();
+        presenter.GetSqlQueryResult(content);
+    }
+}

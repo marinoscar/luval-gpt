@@ -9,6 +9,10 @@ namespace Luval.GPT.Data
         Task<int> UpdateOrCreatePushAgent(IEnumerable<PushAgent> agents);
         Task<PushAgent> CreateAgent(PushAgent agent);
         Task<PushAgent> UpdateAgent(PushAgent agent);
+
+        AppUser CreateAppUser(AppUser appUser);
+
+
         AppUser? GetApplicationUser(string providerName, string providerKey);
         AppUser? GetApplicationUser(string userId);
 

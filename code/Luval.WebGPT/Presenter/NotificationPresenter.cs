@@ -4,6 +4,7 @@ using Luval.GPT.Data.Entities;
 using Luval.WebGPT.Data.ViewModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using WebPush;
 
 namespace Luval.WebGPT.Presenter
@@ -55,6 +56,8 @@ namespace Luval.WebGPT.Presenter
                 Sub.Auth = res.Auth;
                 Sub.Endpoint = res.Endpoint;
                 Sub.P256DH = res.P256DH;
+
+                _logger.LogDebug("\n\n" + JsonConvert.SerializeObject(res, Formatting.Indented));
 
                 var user = _repository.GetApplicationUser(Sub.User.ProviderName, Sub.User.ProviderKey);
 

@@ -26,8 +26,9 @@ builder.Services
     .AddGoogleAuth()
     .AddRepositories()
     .AddServices()
-    .AddPresenters()
-    .AddAppHostedServices();
+    .AddAppHostedServices()
+    .AddCacheProviders()
+    .AddPresenters();
 
 // Add services to the container.
 builder.Services.AddRazorPages();

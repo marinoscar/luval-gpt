@@ -1,4 +1,5 @@
 ﻿using Luval.Framework.Core;
+using Luval.Framework.Core.Cache;
 using Luval.Framework.Services;
 using Luval.GPT.Channels.Push.Models;
 using Luval.GPT.Data;
@@ -7,29 +8,21 @@ using Luval.GPT.Services;
 
 namespace Luval.WebGPT.Presenter
 {
-    public class AgentPresenter
+    public class AgentPresenter : PresenterBase
     {
-        private readonly ILogger _logger;
-        private readonly IRepository _repository;
-        private readonly HttpContext _context;
-        private readonly IHttpContextAccessor _contextA;
         private readonly PushAgentGptManager _gptManager;
-        private AppUser? _appUser;
 
-        public AgentPresenter(ILogger logger, IRepository repository, IHttpContextAccessor context, PushAgentGptManager gptManager)
+        public AgentPresenter(ILogger logger, IRepository repository, IHttpContextAccessor context, ICacheProvider<string, AppUser> userCache, PushAgentGptManager gptManager) : 
+            base(logger, repository, context, userCache)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _gptManager = gptManager ?? throw new ArgumentNullException(nameof(gptManager));
-            _contextA = context ?? throw new ArgumentNullException(nameof(context));
-
-            _context = _contextA?.HttpContext;
         }
 
         public IEnumerable<PushAgent> GetAgents()
         {
             var appUser = GetAppUser();
-            var items = _repository.GetPushAgents(appUser.Id).ToList();
+            if (appUser == null) throw new InvalidDataException("User not registered in the app");
+            var items = Repository.GetPushAgents(appUser.Id).ToList();
             return items;
         }
 
@@ -43,13 +36,13 @@ namespace Luval.WebGPT.Presenter
             {
                 if (messageId == null)
                 {
-                    var agent = _repository.GetPushAgent(Convert.ToUInt64(agentId));
+                    var agent = Repository.GetPushAgent(Convert.ToUInt64(agentId));
                     response.Result = CleanMessage(await CreateMessage(agent));
                     response.Message = "Message created";
                 }
                 else
                 {
-                    response.Result = CleanMessage(_repository.GetAppMessage(Convert.ToUInt64(messageId)));
+                    response.Result = CleanMessage(Repository.GetAppMessage(Convert.ToUInt64(messageId)));
                     response.Message = "Message loaded";
                 }
             }
@@ -68,14 +61,6 @@ namespace Luval.WebGPT.Presenter
         {
             var value = await _gptManager.ProcessPushAgentAsync(agent);
             return value.MessageContent;
-        }
-
-        private AppUser GetAppUser()
-        {
-            if (_appUser != null) return _appUser;
-            var webUser = _context.User.ToUser();
-            _appUser = _repository.GetApplicationUser(webUser.ProviderName, webUser.ProviderKey);
-            return _appUser;
         }
 
         private static AppMessage CleanMessage(AppMessage m)

@@ -11,7 +11,7 @@
     "PromptSuffix": "\r\n* Start the message with ^^^\r\n* Do not exceed 1000 characters\r\n* Include a few emojis\r\n* Remember that my name is Oscar\r\n* Do not include any Hashatags\r\n* End the message with ^^^\r\n",
     "SystemMessage": "You are a helpful assistant",
     "Timezone": "Central Standard Time",
-    "ChronExpression": "*/2 * * * *"
+    "ChronExpression": "0 10,19 * * 1-5"
   },
   {
     "Id": 0,
@@ -25,13 +25,13 @@
     "PromptSuffix": "\r\n* Start the message with ^^^\r\n* Do not exceed 1000 characters\r\n* Include a few emojis\r\n* Remember that my name is Oscar\r\n* Do not include any Hashatags\r\n* End the message with ^^^\r\n",
     "SystemMessage": "You are a helpful assistant",
     "Timezone": "Central Standard Time",
-    "ChronExpression": "*/5 * * * *"
+    "ChronExpression": "0 7,21 * * *"
   },
   {
     "Id": 0,
     "Name": "Health Agent",
     "Description": "The path to a healthier lifestyle is filled with challenges, especially when it comes to managing eating habits. That's why we've introduced a unique feature that sends personalized, motivational messages directly to you. These messages are crafted to remind you of your goals, provide encouragement, and keep you on track.",
-    "ImageUrl": "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/spiritual-agent.png",
+    "ImageUrl": "https://raw.githubusercontent.com/marinoscar/luval-gpt/main/code/Luval.WebGPT/wwwroot/img/food.png",
     "IsPublic": true,
     "RootMessage": "I am looking to improve my health, I am overweight and I struggle with overeating, I eat because I am bored or when I am not hungry, I need you to provide me with messages to help me stay focused on my goals of not over eating and also fasting, I know I can fast for several hours and remind me why fasting and mindful eating is the best thing for me",
     "UserPrompt": "\r\nGreat! I need another message!\r\n",
@@ -39,6 +39,6 @@
     "PromptSuffix": "\r\n* Start the message with ^^^\r\n* Do not exceed 1000 characters\r\n* Include a few emojis\r\n* Remember that my name is Oscar\r\n* Do not include any Hashatags\r\n* End the message with ^^^\r\n",
     "SystemMessage": "You are a helpful assistant",
     "Timezone": "Central Standard Time",
-    "ChronExpression": "*/5 * * * *"
+    "ChronExpression": "0 11,18 * * *"
   }
 ]

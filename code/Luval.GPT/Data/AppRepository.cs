@@ -37,6 +37,13 @@ namespace Luval.GPT.Data
             return agents.Count();
         }
 
+        public AppUser CreateAppUser(AppUser appUser)
+        {
+            var entity = _dbContext.AppUsers.Add(appUser);
+            _dbContext.SaveChanges();
+            return entity.Entity;
+        }
+
         public async Task<PushAgent> CreateAgent(PushAgent agent)
         {
             await _dbContext.PushAgents.AddAsync(agent);
