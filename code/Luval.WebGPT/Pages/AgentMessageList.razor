@@ -1,0 +1,31 @@
+﻿@page "/Agent/{AgentId}/List"
+
+@inject AgentPresenter presenter
+
+@if(Ids == null || !Ids.Any())
+{
+    <div class="alert alert-success" role="alert">
+        <h4 class="alert-heading">No messages found</h4>
+        <hr>
+        <p>Hey there! It looks like the data you're looking for is not available for this agent, you can always go back and create a new entry and try again</p>
+    </div>
+}else if(Ids.Any()){
+    foreach (var id in Ids)
+    {
+        <AgentMessage MessageId="@id" AgentId="@this.AgentId"></AgentMessage>
+    }
+}
+
+@code {
+    public IEnumerable<string> Ids { get; set; } = new List<string>();
+
+    [Parameter]
+    public string? AgentId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Ids = presenter.GetLastMessageIds(AgentId);
+    }
+
+}

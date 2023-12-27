@@ -36,7 +36,7 @@ namespace Luval.WebGPT.Presenter
         /// <summary>
         /// Indicates if the presenter is working
         /// </summary>
-        public virtual bool IsWorking { get; private set; }
+        public virtual bool IsWorking { get; protected set; }
 
         public virtual void Run(Action action)
         {

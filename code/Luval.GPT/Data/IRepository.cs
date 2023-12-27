@@ -5,7 +5,7 @@ namespace Luval.GPT.Data
     public interface IRepository
     {
 
-
+        IEnumerable<ulong> GetLastAgentMessageIds(ulong agentId, int numberoOfRecords);
         Task<int> UpdateOrCreatePushAgent(IEnumerable<PushAgent> agents);
         Task<PushAgent> CreateAgent(PushAgent agent);
         Task<PushAgent> UpdateAgent(PushAgent agent);

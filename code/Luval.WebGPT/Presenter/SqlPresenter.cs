@@ -17,8 +17,8 @@ namespace Luval.WebGPT.Presenter
 
         public void GetSqlQueryResult(string sql)
         {
-            Task.Delay(2000).Wait();
-
+            HasError = false;
+            SystemMessage = null;
             QueryResult.Clear();
             using (var conn = CreateConnection())
             {
@@ -59,10 +59,14 @@ namespace Luval.WebGPT.Presenter
                         }
                     }
                     conn.Close();
+                    if (!QueryResult.Any())
+                        SystemMessage = "Operation completed succesfully";
                 }
                 catch (Exception e)
                 {
-                    QueryResult = ReturnError(e);
+                    QueryResult.Clear();
+                    HasError = true;
+                    SystemMessage = e.Message;
                 }
             }
         }
@@ -88,19 +92,14 @@ namespace Luval.WebGPT.Presenter
 
         public List<Dictionary<string, string>> QueryResult { get; set; }
 
+        public bool HasError { get; set; }
+        public string? SystemMessage { get; set; }
+
         private List<Dictionary<string, string>> CreateTable()
         {
             return new List<Dictionary<string, string>> {
                 new Dictionary<string, string>() { { "Results", "Results"} } ,
                 new Dictionary<string, string>() { { "Results", "Empty"} } ,
-            };
-        }
-
-        private List<Dictionary<string, string>> ReturnError(Exception exception)
-        {
-            return new List<Dictionary<string, string>> {
-                new Dictionary<string, string>() { { "Error Message", "Error Message"} } ,
-                new Dictionary<string, string>() { { "Error Message", exception.Message} } ,
             };
         }
 

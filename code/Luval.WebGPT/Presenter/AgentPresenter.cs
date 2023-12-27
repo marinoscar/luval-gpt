@@ -26,7 +26,15 @@ namespace Luval.WebGPT.Presenter
             return items;
         }
 
-        public async Task<ServiceResponse<AppMessage>> LoadMessage(string? agentId, string? messageId, Action<ServiceResponse<AppMessage>> callback)
+        public IEnumerable<string> GetLastMessageIds(string? agentId)
+        {
+            if(string.IsNullOrEmpty(agentId)) return Array.Empty<string>();
+
+            var items = Repository.GetLastAgentMessageIds(Convert.ToUInt64(agentId), 10);
+            return items.Select(x => x.ToString()); 
+        }
+
+        public async Task<ServiceResponse<AppMessage>> LoadMessage(string? agentId, string? messageId)
         {
             var response = new ServiceResponse<AppMessage>()
             {
@@ -53,7 +61,6 @@ namespace Luval.WebGPT.Presenter
                 response.Status = ServiceStatus.Fail;
                 response.Message = e.Message;
             }
-            callback(response);
             return response;
         }
 
@@ -67,7 +74,9 @@ namespace Luval.WebGPT.Presenter
         {
             var clone = m.Clone();
 
-            clone.AgentText = clone.AgentText.GetTextInBetween("^^^");
+            clone.AgentText = clone.AgentText.GetTextInBetween("^^^")
+                .Replace("[Your Name]", "");
+
             var o = OptionActionModel.FromGpt(clone.MessageData);
             clone.MessageData = o.Title.Replace("^^^", "");
             return clone;

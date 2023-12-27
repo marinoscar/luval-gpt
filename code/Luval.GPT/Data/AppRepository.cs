@@ -29,7 +29,7 @@ namespace Luval.GPT.Data
         {
             foreach (var agent in agents)
             {
-                if(agent.Id <= 0)
+                if (agent.Id <= 0)
                     await CreateAgent(agent);
                 else
                     await UpdateAgent(agent);
@@ -50,7 +50,8 @@ namespace Luval.GPT.Data
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             await _dbContext.PushAgentSubscriptions.AddAsync(new PushAgentSubscription()
             {
-                AppUserId = agent.AppUserId, PushAgentId = agent.Id
+                AppUserId = agent.AppUserId,
+                PushAgentId = agent.Id
             });
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             return agent;
@@ -63,6 +64,13 @@ namespace Luval.GPT.Data
             _dbContext.PushAgents.Entry(entity).CurrentValues.SetValues(agent);
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             return agent;
+        }
+
+        public IEnumerable<ulong> GetLastAgentMessageIds(ulong agentId, int numberoOfRecords)
+        {
+            var agent = new PushAgent() { Id = agentId };
+            return _dbContext.AppMessages.Where(i => i.ProviderName == agent.GetProviderName())
+                .OrderByDescending(i => i.Id).Take(numberoOfRecords).Select(i => i.Id);
         }
 
         public Device RegisterDevice(Device device)

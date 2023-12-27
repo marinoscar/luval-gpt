@@ -12,6 +12,8 @@
 @inject IHttpContextAccessor context
 
 
+<Spinner ShowSpinner="presenter.IsWorking"></Spinner>
+
 <div id="GiveAccess">
     Give access to making notifications:
     <button class="btn btn-primary" id="PromptForAccessBtn" @onclick="AskForPermission">Prompt</button>

@@ -15,8 +15,9 @@
                     <div class="card-body">
                         <h5 class="card-title">@a.Name</h5>
                         <p class="card-text">@a.Description</p>
-                        <a href="@GetUrl(a)" class="btn btn-primary">Run</a>
+                        <a href="@GetAgentUrl(a)" class="btn btn-primary">Run</a>
                         <a href="#" class="btn btn-secondary">Edit</a>
+                        <a href="@GetListUrl(a)" class="btn btn-info">List</a>
                     </div>
                 </div>
             }
@@ -25,8 +26,13 @@
 </AuthorizeView>
 
 @code {
-    string GetUrl(PushAgent a)
+    string GetAgentUrl(PushAgent a)
     {
         return $"/Agent/{a.Id}";
+    }
+
+    string GetListUrl(PushAgent a)
+    {
+        return $"/Agent/{a.Id}/List";
     }
 }

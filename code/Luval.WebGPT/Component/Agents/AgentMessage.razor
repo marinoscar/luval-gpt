@@ -26,7 +26,7 @@ else if (Message != null && Message.Status == ServiceStatus.Fail)
 }
 else
 {
-    <h3><i class="c-inline-spinner"></i> Loading...</h3>
+    <Spinner ShowSpinner=true></Spinner>
 }
 
 
@@ -47,14 +47,9 @@ else
 
     private async Task Load()
     {
-        Message = await presenter.LoadMessage(AgentId, MessageId, Callback);
+        Message = await presenter.LoadMessage(AgentId, MessageId);
 
         if (Message.Status == ServiceStatus.Completed)
             this.StateHasChanged();
-    }
-
-    private void Callback(ServiceResponse<AppMessage> r)
-    {
-
     }
 }

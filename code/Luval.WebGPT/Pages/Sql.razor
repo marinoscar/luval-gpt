@@ -6,40 +6,72 @@
 
 <AuthorizeView>
     <Authorized>
-        <button type="button" class="btn btn-primary" @onclick="RunQuery">Run Query</button>
-        <CodeEditor @ref="_editor" HtmlElementId="jsonEditor" Language="Sql" Width="95%" Height="350px">
-
-        </CodeEditor>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    @foreach (var item in presenter.QueryResult.Take(1))
-                    {
-                        <tr>
-                            @foreach (var col in item.Keys)
-                            {
-                                <th scope="col">
-                                    @item[col]
-                                </th>
-                            }
-                        </tr>
-                    }
-                </thead>
-                <tbody>
-                    @foreach (var item in presenter.QueryResult.Skip(1))
-                    {
-                        <tr>
-                            @foreach (var col in item.Keys)
-                            {
-                                <td>
-                                    @item[col]
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="row  mb-3">
+            <div class="col">
+                <button type="button" class="btn btn-primary" @onclick="RunQuery">Run Query</button>
+            </div>
         </div>
+        <div class="row  mb-3">
+            <div class="col">
+                <CodeEditor @ref="_editor" HtmlElementId="jsonEditor" Language="Sql" Width="95%" Height="350px" />
+            </div>
+        </div>
+        @if(!presenter.HasError && presenter.QueryResult.Any())
+        {
+            <div class="row  mb-3">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table id="query-result" class="table table-striped table-hover">
+                            <thead>
+                                @foreach (var item in presenter.QueryResult.Take(1))
+                                {
+                                    <tr>
+                                        @foreach (var col in item.Keys)
+                                        {
+                                            <th scope="col">
+                                                @item[col]
+                                            </th>
+                                        }
+                                    </tr>
+                                }
+                            </thead>
+                            <tbody>
+                                @foreach (var item in presenter.QueryResult.Skip(1))
+                                {
+                                    <tr>
+                                        @foreach (var col in item.Keys)
+                                        {
+                                            <td>
+                                                @item[col]
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        else if(!string.IsNullOrEmpty(presenter.SystemMessage) && presenter.HasError)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h4 class="alert-heading">System Error</h4>
+                <p>@presenter.SystemMessage</p>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(presenter.SystemMessage) && !presenter.HasError)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <p>@presenter.SystemMessage</p>
+            </div>
+        }
+
+        <script>
+            $(function () { 
+                let table = new DataTable('#query-result');
+            })
+        </script>
 
     </Authorized>
 </AuthorizeView>

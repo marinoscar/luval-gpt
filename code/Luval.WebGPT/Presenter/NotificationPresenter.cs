@@ -1,4 +1,5 @@
-﻿using Luval.Framework.Core.Configuration;
+﻿using Luval.Framework.Core.Cache;
+using Luval.Framework.Core.Configuration;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
 using Luval.WebGPT.Data.ViewModel;
@@ -9,17 +10,10 @@ using WebPush;
 
 namespace Luval.WebGPT.Presenter
 {
-    public class NotificationPresenter
+    public class NotificationPresenter : PresenterBase
     {
-
-        private readonly ILogger _logger;
-        private readonly IRepository _repository;
-
-
-        public NotificationPresenter(ILogger logger, IRepository repository)
+        public NotificationPresenter(ILogger logger, IRepository repository, IHttpContextAccessor context, ICacheProvider<string, AppUser> userCache) : base(logger, repository, context, userCache)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             Sub = new DeviceSubscription()
             {
                 ApplicationServerKey = ConfigManager.Get("VAPIKey"),
@@ -47,6 +41,7 @@ namespace Luval.WebGPT.Presenter
 
         public async Task RegisterDevice()
         {
+            IsWorking = true;
             try
             {
                 if (Sub == null) throw new ArgumentNullException(nameof(Sub));
@@ -57,11 +52,11 @@ namespace Luval.WebGPT.Presenter
                 Sub.Endpoint = res.Endpoint;
                 Sub.P256DH = res.P256DH;
 
-                _logger.LogDebug("\n\n" + JsonConvert.SerializeObject(res, Formatting.Indented));
+                Logger.LogDebug("\n\n" + JsonConvert.SerializeObject(res, Formatting.Indented));
 
-                var user = _repository.GetApplicationUser(Sub.User.ProviderName, Sub.User.ProviderKey);
+                var user = Repository.GetApplicationUser(Sub.User.ProviderName, Sub.User.ProviderKey);
 
-                var d = _repository.RegisterDevice(new Device()
+                var d = Repository.RegisterDevice(new Device()
                 {
                     AppUserId = user.Id,
                     P256DH = Sub.P256DH,
@@ -73,7 +68,11 @@ namespace Luval.WebGPT.Presenter
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Unable to register device");
+                Logger.LogError(e, "Unable to register device");
+            }
+            finally
+            {
+                IsWorking = false;
             }
         }
     }
