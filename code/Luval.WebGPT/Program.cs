@@ -12,7 +12,6 @@ using Luval.Framework.Core.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add controllers
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
@@ -36,6 +35,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,6 +47,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Required for issue:https://github.com/googleapis/google-api-dotnet-client/issues/1899#issuecomment-885669909
+app.UseForwardedHeaders();
 
 app.UseStaticFiles();
 

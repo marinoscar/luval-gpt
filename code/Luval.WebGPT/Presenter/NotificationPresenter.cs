@@ -22,6 +22,11 @@ namespace Luval.WebGPT.Presenter
         }
 
         public DeviceSubscription Sub { get; set; }
+
+        public bool ErrorOcurred { get; set; }
+
+        public string? SystemMessage { get; set; }
+
         public IJSRuntime Js { get; set; }
 
         public void OnAuthFieldChanged(ChangeEventArgs e)
@@ -42,33 +47,43 @@ namespace Luval.WebGPT.Presenter
         public async Task RegisterDevice()
         {
             IsWorking = true;
+            SystemMessage = null;
+            ErrorOcurred = false;
             try
             {
                 if (Sub == null) throw new ArgumentNullException(nameof(Sub));
                 if (Sub.User == null) throw new ArgumentException(nameof(Sub.User));
 
                 var res = await Js.InvokeAsync<PushSubscription>("returnVAPIInfo");
+
                 Sub.Auth = res.Auth;
                 Sub.Endpoint = res.Endpoint;
                 Sub.P256DH = res.P256DH;
 
-                Logger.LogDebug("\n\n" + JsonConvert.SerializeObject(res, Formatting.Indented));
+                Logger.LogDebug("JAVASCRIPT OBJECT:\n\n" + JsonConvert.SerializeObject(res, Formatting.Indented));
 
                 var user = Repository.GetApplicationUser(Sub.User.ProviderName, Sub.User.ProviderKey);
 
-                var d = Repository.RegisterDevice(new Device()
+                var device = new Device()
                 {
                     AppUserId = user.Id,
-                    P256DH = Sub.P256DH,
-                    Endpoint = Sub.Endpoint,
-                    Auth = Sub.Auth,
+                    P256DH = res.P256DH,
+                    Endpoint = res.Endpoint,
+                    Auth = res.Auth,
                     CreatedBy = user.Id,
                     UpdatedBy = user.Id
-                });
+                };
+
+                Logger.LogDebug("DATA OBJECT:\n\n" + JsonConvert.SerializeObject(device, Formatting.Indented));
+
+                var d = Repository.RegisterDevice(device);
+                SystemMessage = "Subscription recorded";
             }
             catch (Exception e)
             {
+                ErrorOcurred = true;
                 Logger.LogError(e, "Unable to register device");
+                SystemMessage = e.Message;
             }
             finally
             {

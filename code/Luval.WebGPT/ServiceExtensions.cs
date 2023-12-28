@@ -14,10 +14,12 @@ using Luval.OpenAI.Chat;
 using Luval.OpenAI.Models;
 using Luval.WebGPT.Presenter;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using IConfigurationProvider = Luval.Framework.Core.Configuration.IConfigurationProvider;
 
@@ -30,8 +32,8 @@ namespace Luval.WebGPT
         /// </summary>
         public static IServiceCollection AddConfing(this IServiceCollection s)
         {
-            var privateConfig = JsonFileConfigurationProvider.LoadOrCreate("private", null, false);
-            var publicConfig = JsonFileConfigurationProvider.LoadOrCreate("config", null, false);
+            var privateConfig = new JsonFileConfigurationProvider(new FileInfo(Path.Combine(GetRootFolderBasedOnOS(), "private.json")));
+            var publicConfig = new JsonFileConfigurationProvider(new FileInfo(Path.Combine(GetRootFolderBasedOnOS(), "config.json")));
             return AddConfing(s, privateConfig, publicConfig);
         }
 
@@ -69,6 +71,7 @@ namespace Luval.WebGPT
         public static IServiceCollection AddGoogleAuth(this IServiceCollection s)
         {
             if (!ConfigManager.IsInitialized()) throw new Exception($"An instance of {typeof(ConfigManager)} needs to be initialized");
+
             s.AddAuthentication("Cookies")
                 .AddCookie(opt =>
                 {
@@ -78,9 +81,12 @@ namespace Luval.WebGPT
                 {
                     opt.ClientId = ConfigManager.Get("GoogleAuthId");
                     opt.ClientSecret = ConfigManager.Get("GoogleAuthSecret");
+
                     opt.ClaimActions.MapJsonKey("urn:google:profile", "link");
                     opt.ClaimActions.MapJsonKey("urn:google:image", "picture");
-                    //opt.CallbackPath = "/auth/google-login"; 
+
+                    opt.CallbackPath = "/signin-google"; 
+
                     opt.Events.OnCreatingTicket = context =>
                     {
                         context?.Identity?.AddClaim(new Claim("providerName", "Google"));
@@ -88,6 +94,19 @@ namespace Luval.WebGPT
                         return Task.CompletedTask;
                     };
                 });
+
+            s.Configure<ForwardedHeadersOptions>(options => {
+                // options.RequireHeaderSymmetry = false;
+
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+                // Only loopback proxies are allowed by default. Clear that restriction because forwarders are
+                // being enabled by explicit configuration.
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
 
             return s;
         }
@@ -188,6 +207,16 @@ namespace Luval.WebGPT
             var cs = new PushAgentChronService(s.GetRequiredService<ILogger>(), repo,
                 gpt, push, refreshInterval, startOn, TimeSpan.FromMinutes(tickInMinutes));
             return cs;
+        }
+
+        private static string GetRootFolderBasedOnOS()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName).DirectoryName;
+            else
+            {
+                return "/var/www/gpt_marin_cr";
+            }
         }
 
     }
