@@ -52,8 +52,10 @@ namespace Luval.WebGPT
             if (!ConfigManager.IsInitialized()) throw new Exception($"An instance of {typeof(ConfigManager)} this to be initialized");
 
             ILogger logger = null;
-            if (Debugger.IsAttached) logger = AppLogger.CreateWithFileAndConsoleAndAws(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
-            else logger = AppLogger.CreateWithConsoleAndAws(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
+            if (Debugger.IsAttached) logger = AppLogger.CreateForAllTargets(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
+
+            else logger = AppLogger.CreateForAllTargets(ConfigManager.Get("AWSAccessKey"), ConfigManager.Get("AWSAccessSecret"), null, null);
+
             s.AddSingleton<ILogger>(logger);
             return s;
         }

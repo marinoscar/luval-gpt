@@ -1,30 +1,16 @@
 ﻿@page "/LogEvents"
 
-@using Microsoft.AspNetCore.SignalR.Client
-@using NLog.SignalR
-@inject NavigationManager Navigation
-
-
+@using Luval.GPT.Logging
+@using Luval.GPT.Logging.NamedPipes
 
 <AuthorizeView Roles="Admin">
     <Authorized>
         <div class="row">
             <div class="col">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th scope="col">Event</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Messages)
-                        {
-                            <tr>
-                                <td>@item.Message</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                @foreach(var e in Messages)
+                {
+                    <p>@e.Message</p>
+                }
             </div>
         </div>
     </Authorized>
@@ -38,25 +24,21 @@
 </AuthorizeView>
 
 @code {
-    private List<LogEvent> Messages { get; set; } = new List<LogEvent>();
-    private HubConnection? hubConnection;
+    private List<PipeLogEvent> Messages { get; set; } = new List<PipeLogEvent>();
+    private PipeClient Client { get; set; } = new PipeClient();
 
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/logginghub"))
-            .Build();
-
-
-        hubConnection.On<LogEvent>("Log", (e) =>
-        {
-            if (Messages.Count > 100) Messages.RemoveAt(0);
-            Messages.Add(e);
-            InvokeAsync(StateHasChanged);
-        });
-
-
-        await hubConnection.StartAsync();
+        Client.OpenConnection();
+        Client.OnMessageRecieved = Message;
+        base.OnInitialized();
     }
+
+    private void Message(PipeLogEvent e)
+    {
+        if (Messages.Count > 100) Messages.RemoveAt(0);
+        Messages.Add(e);
+        InvokeAsync(StateHasChanged);
+    }
+
 }

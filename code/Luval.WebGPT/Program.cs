@@ -11,6 +11,7 @@ using Luval.Framework.Core;
 using Luval.Framework.Core.Configuration;
 using Microsoft.AspNetCore.Builder;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add controllers
@@ -61,8 +62,6 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 app.MapBlazorHub();
-
-//app.MapHub<LoggingHub>("/logginghub");
 
 app.MapFallbackToPage("/_Host");
 

@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime;
+using Luval.GPT.Logging.NamedPipes;
 using Luval.GPT.Utilities;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
@@ -22,9 +23,17 @@ namespace Luval.GPT.Logging
     {
 
         private readonly Logger _logger;
-        public AppLogger(Logger logger)
+        private readonly IEnumerable<ILogger> _loggers;
+
+        public AppLogger(Logger logger) : this(logger, new List<ILogger>())
+        {
+
+        }
+
+        public AppLogger(Logger logger, IEnumerable<ILogger> loggers)
         {
             _logger = logger;
+            _loggers = loggers;
         }
 
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull
@@ -40,7 +49,13 @@ namespace Luval.GPT.Logging
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (!IsEnabled(logLevel)) return;
+
             _logger.Log(Map(logLevel), exception, formatter(state, exception));
+
+            foreach (var l in _loggers)
+            {
+                l.Log<TState>(logLevel, eventId, state, exception, formatter);
+            }
         }
 
         private NLog.LogLevel Map(Microsoft.Extensions.Logging.LogLevel level)
@@ -60,17 +75,18 @@ namespace Luval.GPT.Logging
 
         public static ILogger CreateForAllTargets(string awsKey, string awsSecret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
-            return CreateLogger(minLevel, maxLevel, (c, min, max) => {
+            return CreateLogger(minLevel, maxLevel, (c, min, max) =>
+            {
                 AddConsoleTarget(c, min, max);
                 AddFileTarget(c, min, max);
                 AddAwsTarget(c, awsKey, awsSecret, min, max);
-                AddSignalRTarget(c, min, max);
             });
         }
 
         public static ILogger CreateWithFileAndConsole(NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
-            return CreateLogger(minLevel, maxLevel, (c, min, max) => {
+            return CreateLogger(minLevel, maxLevel, (c, min, max) =>
+            {
                 AddConsoleTarget(c, min, max);
                 AddFileTarget(c, min, max);
             });
@@ -78,7 +94,8 @@ namespace Luval.GPT.Logging
 
         public static ILogger CreateWithFileAndConsoleAndAws(string key, string secret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
-            return CreateLogger(minLevel, maxLevel, (c, min, max) => {
+            return CreateLogger(minLevel, maxLevel, (c, min, max) =>
+            {
                 AddConsoleTarget(c, min, max);
                 AddFileTarget(c, min, max);
                 AddAwsTarget(c, key, secret, min, max);
@@ -87,7 +104,8 @@ namespace Luval.GPT.Logging
 
         public static ILogger CreateWithConsoleAndAws(string key, string secret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
-            return CreateLogger(minLevel, maxLevel, (c, min, max) => {
+            return CreateLogger(minLevel, maxLevel, (c, min, max) =>
+            {
                 AddConsoleTarget(c, min, max);
                 AddAwsTarget(c, key, secret, min, max);
             });
@@ -98,15 +116,6 @@ namespace Luval.GPT.Logging
             var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole");
             AssignTarget(config, logconsole, minLevel, maxLevel);
             return logconsole;
-        }
-
-        public static Target AddSignalRTarget(LoggingConfiguration config, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
-        {
-            var target = new NLog.SignalR.SignalRTarget() { 
-                Name = "signalr", MethodName = "Log", Uri = Utils.GetAppUrl(), HubName = "LoggingHub"
-            };
-            AssignTarget(config, target, minLevel, maxLevel);
-            return target;
         }
 
         public static Target AddAwsTarget(LoggingConfiguration config, string key, string secret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
@@ -144,7 +153,7 @@ namespace Luval.GPT.Logging
             action(config, minLevel, maxLevel);
             NLog.LogManager.Configuration = config;
             var logger = LogManager.GetCurrentClassLogger();
-            return new AppLogger(logger);
+            return new AppLogger(logger, new[] { new NamedPipeLogger() });
         }
     }
 }
