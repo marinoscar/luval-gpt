@@ -46,6 +46,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Required to solve the issue
 app.UseHttpsRedirection();
 
 // Required for issue:https://github.com/googleapis/google-api-dotnet-client/issues/1899#issuecomment-885669909

@@ -8,9 +8,9 @@ namespace Luval.WebGPT.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
+        [AllowAnonymous]
         [HttpGet("google-login")] //This mathches the configuration of the Google Auth
         public IActionResult GoogleLogin()
         {

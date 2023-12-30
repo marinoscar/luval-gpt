@@ -73,31 +73,46 @@ namespace Luval.WebGPT
             if (!ConfigManager.IsInitialized()) throw new Exception($"An instance of {typeof(ConfigManager)} needs to be initialized");
 
             s.AddAuthentication("Cookies")
+
                 .AddCookie(opt =>
                 {
+                    // This will be the name of the cookie and the path the authentication flow
+                    // will use to create the challange
                     opt.Cookie.Name = "GoogleOauth";
                     opt.LoginPath = "/auth/google-login";
+
                 }).AddGoogle(opt =>
                 {
+                    //Google credentials for OAuth
                     opt.ClientId = ConfigManager.Get("GoogleAuthId");
                     opt.ClientSecret = ConfigManager.Get("GoogleAuthSecret");
 
+                    //Maps the information coming from Google into the correct claims
                     opt.ClaimActions.MapJsonKey("urn:google:profile", "link");
                     opt.ClaimActions.MapJsonKey("urn:google:image", "picture");
 
+                    //This is the route that will redirected to after the challenge, you need to make sure
+                    //it is also configured in the Google console under the API Credentials
+                    //https://console.cloud.google.com/apis/credentials
+                    //For the Linux environment there is an issue around the path not using https by default
+                    //and using http that causes the path not to match because Google always expect https, in this
+                    //guide there is more information on how to solve the issue, but here is a reference to the problem
+                    //https://github.com/googleapis/google-api-dotnet-client/issues/1899#issue-951145621
                     opt.CallbackPath = "/signin-google"; 
 
+                    //Event that is triggered after the use is authenticated
                     opt.Events.OnCreatingTicket = context =>
                     {
+                        //Here you can add your own code to create other claims or other type of validations
                         context?.Identity?.AddClaim(new Claim("providerName", "Google"));
+                        //This method is checking for user email and just adding a role, something like this example
+                        // ``identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));``
                         CheckForAdmin(context?.Identity);
                         return Task.CompletedTask;
                     };
                 });
 
             s.Configure<ForwardedHeadersOptions>(options => {
-                // options.RequireHeaderSymmetry = false;
-
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
