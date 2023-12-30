@@ -1,6 +1,7 @@
 ﻿using Luval.Framework.Core.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,12 @@ namespace Luval.GPT.Utilities
                 PublicKey = ConfigManager.Get("VAPIKey"),
                 PrivateKey = ConfigManager.Get("VAPISecret"),
             };
+        }
+
+        public static string GetAppUrl()
+        {
+            if (Debugger.IsAttached) return ConfigManager.Get("AppUrl_Dev");
+            return ConfigManager.Get("AppUrl_Prod");
         }
     }
 }

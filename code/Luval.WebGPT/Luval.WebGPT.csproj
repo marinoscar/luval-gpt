@@ -7,7 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Hubs\LoggerHub.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\LogEvents.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.14" />
+    <PackageReference Include="NLog.SignalR" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Hubs\" />
     <Folder Include="wwwroot\monaco\" />
   </ItemGroup>
 

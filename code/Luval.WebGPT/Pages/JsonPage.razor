@@ -6,9 +6,7 @@
 @inject IHttpContextAccessor contextAccesor
 @inject ControllerClientPresenter presenter
 
-<LoginControl></LoginControl>
-
-<AuthorizeView>
+<AuthorizeView Roles="Admin">
     <Authorized>
         <div class="row">
             <div class="col-7">
@@ -46,6 +44,13 @@
             </div>
         </div>
     </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">No Access</h4>
+            <hr>
+            <p>You don't have the required permission to access this resource</p>
+        </div>
+    </NotAuthorized>
 </AuthorizeView>
 
 @code {

@@ -4,6 +4,7 @@ using Luval.Framework.Services.Utilities;
 using Luval.GPT.Channels.Push;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
+using Luval.GPT.Utilities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -106,7 +107,7 @@ namespace Luval.GPT.Services
         {
             var res = await _pushManager.ProcessPushAgentAsync(agentData.Agent);
 
-            var options = res.GetOptions(ConfigManager.Get("WebPushUrl"), null);
+            var options = res.GetOptions(Utils.GetAppUrl(), null);
 
             _logger.LogDebug($"Issuing Notification for: {agentData.Agent.Name} user {agentData.Agent.AppUserId} and device {device.Id}");
 

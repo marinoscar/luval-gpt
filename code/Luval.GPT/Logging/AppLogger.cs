@@ -1,4 +1,6 @@
 ﻿using Amazon.Runtime;
+using Luval.GPT.Utilities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.AWS.Logger;
@@ -8,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Twilio.TwiML.Voice;
@@ -54,6 +57,17 @@ namespace Luval.GPT.Logging
             }
         }
 
+
+        public static ILogger CreateForAllTargets(string awsKey, string awsSecret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
+        {
+            return CreateLogger(minLevel, maxLevel, (c, min, max) => {
+                AddConsoleTarget(c, min, max);
+                AddFileTarget(c, min, max);
+                AddAwsTarget(c, awsKey, awsSecret, min, max);
+                AddSignalRTarget(c, min, max);
+            });
+        }
+
         public static ILogger CreateWithFileAndConsole(NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
             return CreateLogger(minLevel, maxLevel, (c, min, max) => {
@@ -81,9 +95,18 @@ namespace Luval.GPT.Logging
 
         public static Target AddConsoleTarget(LoggingConfiguration config, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
         {
-            var logconsole = new NLog.Targets.ConsoleTarget("logconsole");
+            var logconsole = new NLog.Targets.ColoredConsoleTarget("logconsole");
             AssignTarget(config, logconsole, minLevel, maxLevel);
             return logconsole;
+        }
+
+        public static Target AddSignalRTarget(LoggingConfiguration config, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
+        {
+            var target = new NLog.SignalR.SignalRTarget() { 
+                Name = "signalr", MethodName = "Log", Uri = Utils.GetAppUrl(), HubName = "LoggingHub"
+            };
+            AssignTarget(config, target, minLevel, maxLevel);
+            return target;
         }
 
         public static Target AddAwsTarget(LoggingConfiguration config, string key, string secret, NLog.LogLevel? minLevel, NLog.LogLevel? maxLevel)
