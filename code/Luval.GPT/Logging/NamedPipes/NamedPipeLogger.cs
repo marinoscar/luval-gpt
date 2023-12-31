@@ -11,7 +11,7 @@ namespace Luval.GPT.Logging.NamedPipes
     {
 
         public string PipeName { get; private set; }
-        public ProxyServer ProxyServer { get; private set; }
+        public PipeServer ProxyServer { get; private set; }
 
         public NamedPipeLogger() : this("marinlogpipe")
         {
@@ -20,7 +20,7 @@ namespace Luval.GPT.Logging.NamedPipes
         public NamedPipeLogger(string pipeName)
         {
             PipeName = pipeName ?? throw new ArgumentNullException(nameof(pipeName));
-            ProxyServer = new ProxyServer(PipeName);
+            ProxyServer = new PipeServer(PipeName);
             ProxyServer.Start();
             Task.Delay(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
         }

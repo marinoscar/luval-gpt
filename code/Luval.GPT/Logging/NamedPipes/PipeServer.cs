@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Luval.GPT.Logging.NamedPipes
 {
-    public class ProxyServer : IDisposable
+    public class PipeServer : IDisposable
     {
         public string PipeName { get; private set; }
         private H.Pipes.PipeServer<PipeLogEvent> _server;
 
-        public ProxyServer(string? pipeName)
+        public PipeServer(string? pipeName)
         {
             PipeName = pipeName ?? throw new ArgumentNullException(nameof(pipeName));
             _server = new H.Pipes.PipeServer<PipeLogEvent>(PipeName, new H.Formatters.NewtonsoftJsonFormatter());
