@@ -10,6 +10,7 @@ using Luval.GPT.Services;
 using Luval.Framework.Core;
 using Luval.Framework.Core.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Luval.OpenAI.Audio;
 
 
 var builder = WebApplication.CreateBuilder(args);

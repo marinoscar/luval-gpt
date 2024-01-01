@@ -1,5 +1,6 @@
 ﻿using Luval.Framework.Core.Configuration;
 using Luval.Framework.Services;
+using Luval.GPT.BlobStorage;
 using Luval.GPT.Channels.Push.Models;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
@@ -16,17 +17,21 @@ namespace Luval.GPT.Services
     {
         private readonly IRepository _repository;
         private readonly PromptAgentService _agentService;
-        public PushAgentGptManager(IRepository repository, PromptAgentService promptAgent)
+        private readonly IBlobFileManager _fileManager;
+        private readonly TextToSpeechService _textToSpeechService;
+        public PushAgentGptManager(IRepository repository, PromptAgentService promptAgent, TextToSpeechService textToSpeechService, IBlobFileManager fileManager)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _agentService = promptAgent ?? throw new ArgumentNullException(nameof(promptAgent));
+            _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
+            _textToSpeechService = textToSpeechService ?? throw new ArgumentNullException(nameof(textToSpeechService));
         }
 
         public async Task<WebPushResponse> ProcessPushAgentAsync(PushAgent agent)
         {
             var purpose = _repository.GetPurpose(agent.AppUserId);
             string purposeText;
-            
+
             if (purpose == null)
                 purposeText = GetGenericPurpose();
             else
@@ -36,6 +41,22 @@ namespace Luval.GPT.Services
             var gptNotification = await GetMessageForNotification(gptMessage);
 
             gptMessage.MessageData = gptNotification.AgentText;
+
+            //creates the audio file
+            var audioStream = await _textToSpeechService.ExecuteAsync(gptMessage.AgentText, CancellationToken.None);
+            if (audioStream.Status != ServiceStatus.Completed) throw new Exception("Unable to create the audio stream", audioStream.Exception);
+
+            //uploads to the storage location
+            var id = Guid.NewGuid().ToString();
+            var audioData = _fileManager.Upload(new Blob() {
+                Id = id,
+                Content = audioStream.Result,
+                Name = $"MSG{id}.mp3"
+            });
+
+            gptMessage.AgentMediaType = "audio";
+            gptMessage.AgentMediaItemUrl = audioData.ObjectUrl;
+
             _repository.UpdateAppMessage(gptMessage);
 
             return new WebPushResponse() { MessageContent = gptMessage, NotificationContent = gptNotification };

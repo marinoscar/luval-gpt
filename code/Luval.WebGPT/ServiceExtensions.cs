@@ -1,5 +1,7 @@
 ﻿using Luval.Framework.Core.Cache;
 using Luval.Framework.Core.Configuration;
+using Luval.GPT.BlobStorage;
+using Luval.GPT.BlobStorage.S3;
 using Luval.GPT.Channels.Push;
 using Luval.GPT.Data;
 using Luval.GPT.Data.Entities;
@@ -195,6 +197,16 @@ namespace Luval.WebGPT
 
         public static IServiceCollection AddServices(this IServiceCollection s)
         {
+            s.AddSingleton<IBlobFileManager>((s) => {
+                return new S3FileManager(
+                    ConfigManager.Get("AWSAccessKey"),
+                    ConfigManager.Get("AWSAccessSecret"),
+                    ConfigManager.Get("AWSS3BucketName")
+                    );
+            });
+            s.AddSingleton<TextToSpeechService>();
+            s.AddSingleton<ITextToSpeechAgent, TextToSpeechAgent>();
+
             s.AddScoped<ChatEndpoint>((s) => CreateChatEndpoint());
             s.AddScoped<IChatAgent, OpenAIChatAgent>();
             s.AddScoped<PromptAgentService>();
@@ -214,7 +226,11 @@ namespace Luval.WebGPT
         private static PushAgentChronService CreatePushChronService(IServiceProvider s)
         {
             var repo = new AppRepository(CreateAppDbContext());
-            var gpt = new PushAgentGptManager(repo, new PromptAgentService(s.GetRequiredService<ILogger>(), CreateChatAgent(repo)));
+            var t2sService = s.GetRequiredService<TextToSpeechService>();
+            var fileManager = s.GetRequiredService<IBlobFileManager>();
+
+            var gpt = new PushAgentGptManager(repo, new PromptAgentService(s.GetRequiredService<ILogger>(), CreateChatAgent(repo)), t2sService, fileManager);
+
             var push = new PushClient(s.GetRequiredService<ILogger>(), Utils.CreateVapid());
             var refreshInterval =  Convert.ToUInt32(ConfigManager.GetOrDefault("PushAgentChronRefresh", "30"));
             var tickInMinutes = Convert.ToInt32(ConfigManager.GetOrDefault("PushAgentChronTickInMinutes", "1"));

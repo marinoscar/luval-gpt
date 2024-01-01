@@ -15,8 +15,22 @@
         <div class="card-body">
             <p class="card-text">
                 @Message.Result.AgentText
-             </p>
-            <a class="btn btn-primary">Like</a>
+            </p>
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-primary">Like</a>
+                </div>
+                <div class="col">
+                    @if (!string.IsNullOrWhiteSpace(@Message.Result.AgentMediaItemUrl))
+                    {
+                        <audio controls>
+                            <source src="@Message.Result.AgentMediaItemUrl" type="audio/mp3">
+                            Your browser does not support the audio element.
+                        </audio>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 }

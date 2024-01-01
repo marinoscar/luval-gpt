@@ -8,9 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="AWS.Logger.NLog" Version="3.2.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.305.3" />
     <PackageReference Include="H.Formatters.Newtonsoft.Json" Version="13.0.59" />
     <PackageReference Include="H.Pipes" Version="2.0.59" />
-    <PackageReference Include="Luval.OpenAI" Version="1.0.3" />
+    <PackageReference Include="Luval.OpenAI" Version="1.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="MySql.Data" Version="8.2.0" />
