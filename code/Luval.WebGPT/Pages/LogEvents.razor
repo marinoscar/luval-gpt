@@ -3,16 +3,43 @@
 @using Luval.GPT.Logging
 @using Luval.GPT.Logging.NamedPipes
 
+@inject IJSRuntime js
+
 <AuthorizeView Roles="Admin">
     <Authorized>
-        <div class="row">
-            <div class="col">
-                @foreach(var e in Messages)
-                {
-                    <p>@e.Message</p>
-                }
+        <div id="console-main" class="overflow-auto bg-dark" style="height:700px">
+            <div class="row" style="padding-left:10px;padding-top:10px">
+                <div class="col">
+                    @if (Messages.Any())
+                    {
+                        @foreach (var e in Messages)
+                        {
+                            <pre><code class="text-success">@e.Message</code></pre>
+                        }
+                        <div id="focus-element"></div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                            </div>
+                            <div class="col-sm-11">
+                                <pre><code class="text-success">Connected and waiting for events</code></pre>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
+        <script>
+            function pageFocusOnElement() {
+                var focusEl = document.getElementById('focus-element');
+                var divEl = document.getElementById('console-main');
+                focusEl.focus();
+                divEl.scrollTop = divEl.scrollHeight;
+            }
+        </script>
     </Authorized>
     <NotAuthorized>
         <div class="alert alert-warning" role="alert">
@@ -38,7 +65,12 @@
     {
         if (Messages.Count > 100) Messages.RemoveAt(0);
         Messages.Add(e);
-        InvokeAsync(StateHasChanged);
+
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+            js.InvokeVoidAsync("pageFocusOnElement");
+        });
     }
 
 }
