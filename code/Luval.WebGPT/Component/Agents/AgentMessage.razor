@@ -6,25 +6,37 @@
 
 @if (Message != null && Message.Result != null && Message.Status == ServiceStatus.Completed)
 {
-    <div class="card mt-1">
-        <div class="card-body">
-            <p class="card-text">
-                @Message.Result.AgentText
-            </p>
-            <hr />
-            <div class="row">
-                <div class="col">
-                    <a class="btn btn-primary">Like</a>
+    <div style="padding-bottom:20px">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text">
+                    @Message.Result.AgentText
+                </p>
+                <hr />
+                <div class="row">
+                    <div class="col">
+                        @if(Message.Result.UpVote <= 0)
+                        {
+                            <a class="btn btn-primary" @onclick="UpVote">Like</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary" @onclick="UpVote">Like +@Message.Result.UpVote</a>
+                        }
+                    </div>
+                    <div class="col">
+                        @if (!string.IsNullOrWhiteSpace(@Message.Result.AgentMediaItemUrl))
+                        {
+                            <audio controls>
+                                <source src="@Message.Result.AgentMediaItemUrl" type="audio/mp3">
+                                Your browser does not support the audio element.
+                            </audio>
+                        }
+                    </div>
                 </div>
-                <div class="col">
-                    @if (!string.IsNullOrWhiteSpace(@Message.Result.AgentMediaItemUrl))
-                    {
-                        <audio controls>
-                            <source src="@Message.Result.AgentMediaItemUrl" type="audio/mp3">
-                            Your browser does not support the audio element.
-                        </audio>
-                    }
-                </div>
+            </div>
+            <div class="card-footer text-muted">
+                Created @presenter.GetCreatedTimeString(Message.Result.UtcCreatedOn)
             </div>
         </div>
     </div>
@@ -60,5 +72,15 @@ else
 
         if (Message.Status == ServiceStatus.Completed)
             this.StateHasChanged();
+    }
+
+    private void UpVote()
+    {
+        presenter.Run(() =>
+        {
+            var msg = presenter.UpVote(Message.Result.Id);
+            Message.Result.UpVote = msg.UpVote;
+        });
+        InvokeAsync(StateHasChanged);
     }
 }

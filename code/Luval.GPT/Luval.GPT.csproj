@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Core\Luval.Framework.Core.csproj" />
     <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Data\Luval.Framework.Data.csproj" />
     <ProjectReference Include="..\..\..\luval-framework\code\Luval.Framework.Services\Luval.Framework.Services.csproj" />
+    <ProjectReference Include="..\..\..\Luval.Logging.TableStorage\code\Luval.Logging.TableStorage\Luval.Logging.TableStorage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

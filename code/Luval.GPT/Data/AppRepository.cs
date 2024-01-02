@@ -18,6 +18,30 @@ namespace Luval.GPT.Data
             _dbContext = dbContext;
         }
 
+
+        public AppMessage UpVote(ulong messageId)
+        {
+            var item = _dbContext.AppMessages.FirstOrDefault(i => i.Id == messageId);
+            if (item == null) return null;
+            item.UpVote = item.UpVote + 1;
+            item.UtcUpdatedOn = DateTime.UtcNow;
+            item.Version = item.Version + 1;
+            _dbContext.SaveChanges();
+            return item;
+        }
+
+        public AppMessage DownVote(ulong messageId)
+        {
+            var item = _dbContext.AppMessages.FirstOrDefault(i => i.Id == messageId);
+            if (item == null) return null;
+            if (item.UpVote <= 0) return item;
+            item.UpVote = item.UpVote - 1;
+            item.UtcUpdatedOn = DateTime.UtcNow;
+            item.Version = item.Version + 1;
+            _dbContext.SaveChanges();
+            return item;
+        }
+
         public async Task<AppMessage> PersistMessageAsync(AppMessage message)
         {
             await _dbContext.AppMessages.AddAsync(message);

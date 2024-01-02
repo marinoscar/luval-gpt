@@ -11,6 +11,7 @@ using Luval.Framework.Core;
 using Luval.Framework.Core.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Luval.OpenAI.Audio;
+using Luval.Logging.TableStorage;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,8 +36,6 @@ builder.Services
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
-
 
 
 var app = builder.Build();

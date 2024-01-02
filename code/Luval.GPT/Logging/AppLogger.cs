@@ -1,6 +1,8 @@
 ﻿using Amazon.Runtime;
+using Luval.Framework.Core.Configuration;
 using Luval.GPT.Logging.NamedPipes;
 using Luval.GPT.Utilities;
+using Luval.Logging.TableStorage;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using NLog;
@@ -153,7 +155,9 @@ namespace Luval.GPT.Logging
             action(config, minLevel, maxLevel);
             NLog.LogManager.Configuration = config;
             var logger = LogManager.GetCurrentClassLogger();
-            return new AppLogger(logger, new[] { new NamedPipeLogger() });
+            return new AppLogger(logger, 
+                new ILogger[] { new NamedPipeLogger(),
+                        new TableStorageLogger(new TableStorageConfiguration(ConfigManager.Get("AzureTableStorage"), "MarinGPT"))});
         }
     }
 }

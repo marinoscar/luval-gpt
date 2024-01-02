@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luval.WebGPT", "Luval.WebGP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{3A521907-BA13-4D6D-8A54-7B616C4E5EF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luval.Logging.TableStorage", "..\..\Luval.Logging.TableStorage\code\Luval.Logging.TableStorage\Luval.Logging.TableStorage.csproj", "{CBB83D0C-891E-48C7-BB11-5156C02C9D86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{8FB9B4ED-F96A-4207-823C-8D2326D557B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB9B4ED-F96A-4207-823C-8D2326D557B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB9B4ED-F96A-4207-823C-8D2326D557B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBB83D0C-891E-48C7-BB11-5156C02C9D86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBB83D0C-891E-48C7-BB11-5156C02C9D86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBB83D0C-891E-48C7-BB11-5156C02C9D86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBB83D0C-891E-48C7-BB11-5156C02C9D86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{9DFEE484-7B1F-412E-8AF6-49C290F2D31F} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
 		{F5CD0F4C-0AEA-45DC-8B91-C5D9EAD12310} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
 		{20635B1F-A2AA-4AA9-B3DD-6F5356D01473} = {A5CF9428-E2A3-449B-8486-08BCE9C3F0D8}
+		{CBB83D0C-891E-48C7-BB11-5156C02C9D86} = {3A521907-BA13-4D6D-8A54-7B616C4E5EF6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EE7FC68-5E97-4D79-88D3-F4900BF51CCC}

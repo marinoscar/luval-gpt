@@ -11,11 +11,15 @@ namespace Luval.WebGPT.Presenter
     public class AgentPresenter : PresenterBase
     {
         private readonly PushAgentGptManager _gptManager;
+        private TimeZoneInfo _timeZoneInfo;
+        private readonly IRepository _repository;
 
         public AgentPresenter(ILogger logger, IRepository repository, IHttpContextAccessor context, ICacheProvider<string, AppUser> userCache, PushAgentGptManager gptManager) : 
             base(logger, repository, context, userCache)
         {
             _gptManager = gptManager ?? throw new ArgumentNullException(nameof(gptManager));
+            _timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+            _repository = repository;
         }
 
         public IEnumerable<PushAgent> GetAgents()
@@ -64,10 +68,16 @@ namespace Luval.WebGPT.Presenter
             return response;
         }
 
+
         public async Task<AppMessage> CreateMessage(PushAgent agent)
         {
             var value = await _gptManager.ProcessPushAgentAsync(agent);
             return value.MessageContent;
+        }
+
+        public AppMessage UpVote(ulong messageId)
+        {
+            return _repository.UpVote(messageId);
         }
 
         private static AppMessage CleanMessage(AppMessage m)
@@ -80,6 +90,39 @@ namespace Luval.WebGPT.Presenter
             var o = OptionActionModel.FromGpt(clone.MessageData);
             clone.MessageData = o.Title.Replace("^^^", "");
             return clone;
+        }
+
+        public string GetCreatedTimeString(DateTime? utcCreatedOn)
+        {
+            if (utcCreatedOn == null) return string.Empty;
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, _timeZoneInfo);
+            var createdOnLocal = TimeZoneInfo.ConvertTimeFromUtc(utcCreatedOn.Value.TrimMs(), _timeZoneInfo);
+            var span = localTime.Subtract(createdOnLocal);
+
+            if(Convert.ToInt64(span.TotalDays) > 365)
+            {
+                var years = (span.TotalDays / 365);
+                return GetDuration(years, "year");
+            }
+            if(Convert.ToInt64(span.TotalDays) > 0)
+            {
+                return GetDuration(span.TotalDays, "day");
+            }
+            if (Convert.ToInt64(span.TotalHours) > 0)
+            {
+                return GetDuration(span.TotalHours, "hour");
+            }
+            if (Convert.ToInt64(span.TotalMinutes) > 0)
+            {
+                return GetDuration(span.TotalMinutes, "min");
+            }
+            return GetDuration(span.TotalSeconds, "sec");
+        }
+
+        private string GetDuration(double span, string part)
+        {
+            var val = Convert.ToInt32(span);
+            return val == 1 ? $"{val} {part} ago" : $"{val} {part}s ago";
         }
     }
 }

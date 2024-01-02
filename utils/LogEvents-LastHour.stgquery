@@ -1,0 +1,60 @@
+{
+  "fileVersion": "0.2",
+  "filterType": "Query Builder",
+  "filter": [
+    {
+      "id": "bd178d5e-36dc-45cb-aa2a-7029c9ea1df3",
+      "andOr": "And",
+      "field": "PartitionKey",
+      "type": "String",
+      "operator": "=",
+      "value": "MarinGPT",
+      "timestampType": "time",
+      "timeValue": "Last 7 days",
+      "customTimestamp": {
+        "lastNumber": 7,
+        "lastTimeUnit": "Days"
+      },
+      "isLocal": true
+    },
+    {
+      "id": "e081c9a1-d120-4205-8793-13da925f3c29",
+      "andOr": "And",
+      "field": "RowKey",
+      "type": "String",
+      "operator": "=",
+      "value": "8E6537CF76054EFF9DEBD165D6E15EA9",
+      "timestampType": "time",
+      "timeValue": "Last 7 days",
+      "customTimestamp": {
+        "lastNumber": 7,
+        "lastTimeUnit": "Days"
+      },
+      "isLocal": true
+    },
+    {
+      "id": "f56f6046-b9b4-472f-a0dd-e256e9bf1b58",
+      "andOr": "And",
+      "field": "Timestamp",
+      "type": "DateTime",
+      "operator": ">=",
+      "value": "",
+      "timestampType": "time",
+      "timeValue": "Last hour",
+      "customTimestamp": {
+        "lastNumber": 7,
+        "lastTimeUnit": "Days"
+      },
+      "isLocal": true
+    }
+  ],
+  "group": {
+    "id": "042f9393-2bcb-4b92-8c0c-b35feb8e675a",
+    "children": [
+      "bd178d5e-36dc-45cb-aa2a-7029c9ea1df3",
+      "e081c9a1-d120-4205-8793-13da925f3c29",
+      "f56f6046-b9b4-472f-a0dd-e256e9bf1b58"
+    ]
+  },
+  "select": []
+}
